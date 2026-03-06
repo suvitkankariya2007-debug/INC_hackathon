@@ -56,7 +56,7 @@ for i, row in df.iterrows():
         continue
 
     # Check description similarity
-    score = fuzz.ratio(bank_desc, ledger_desc)
+    score = fuzz.partial_ratio(bank_desc, ledger_desc)
 
     # Classification
     if score >= 80:

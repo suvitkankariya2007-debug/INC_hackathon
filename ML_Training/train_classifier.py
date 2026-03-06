@@ -39,8 +39,10 @@ test_vec = vectorizer.transform(test_transactions)
 predictions = model.predict(test_vec)
 
 for t, p in zip(test_transactions, predictions):
+
     print(t, "->", p)
-    pickle.dump(model, open("transaction_classifier.pkl", "wb"))
+
 pickle.dump(vectorizer, open("tfidf_vectorizer.pkl", "wb"))
+pickle.dump(model, open("transaction_classifier.pkl", "wb"))
 
 print("Model saved successfully")
