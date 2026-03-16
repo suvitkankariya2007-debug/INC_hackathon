@@ -3,9 +3,7 @@ import os
 from openai import OpenAI
 from dotenv import load_dotenv
 
-
-load_dotenv()
-
+load_dotenv("../.env")
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
@@ -17,11 +15,6 @@ vectorizer = pickle.load(open("tfidf_vectorizer.pkl", "rb"))
 model = pickle.load(open("transaction_classifier.pkl", "rb"))
 
 
-# -------------------------
-# Create OpenAI client
-# -------------------------
-
-client = OpenAI()
 
 
 # -------------------------
