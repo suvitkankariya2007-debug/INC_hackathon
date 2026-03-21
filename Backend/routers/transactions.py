@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Dict
 import csv
 import io
 from ..database import get_db
@@ -21,20 +21,17 @@ class TransactionCreate(BaseModel):
     account_type: str
     cash_flow_section: Optional[str] = None
 
-class TransactionUpdate(BaseModel):
-    category: str
-
 class TransactionResponse(BaseModel):
     id: int
     category: str
-    ai_confidence: float
+    ai_confidence: Optional[float]
 
 @router.post("", response_model=TransactionResponse, status_code=201)
 def create_transaction(tx: TransactionCreate, db: Session = Depends(get_db)):
     try:
         cls_result = classify(tx.description)
-        ai_category = cls_result["ai_category"]
-        ai_confidence = cls_result["ai_confidence"]
+        ai_category = cls_result.get("category")
+        ai_confidence = cls_result.get("confidence")
 
         db_tx = Transaction(
             entity_id=tx.entity_id,
@@ -58,7 +55,7 @@ def create_transaction(tx: TransactionCreate, db: Session = Depends(get_db)):
         return TransactionResponse(
             id=db_tx.id,
             category=db_tx.category,
-            ai_confidence=db_tx.ai_confidence or 0.0
+            ai_confidence=db_tx.ai_confidence
         )
     except Exception as e:
         db.rollback()
@@ -66,17 +63,16 @@ def create_transaction(tx: TransactionCreate, db: Session = Depends(get_db)):
 
 @router.get("")
 def list_transactions(
-    entity_id: Optional[int] = None,
+    entity_id: int,
     start_date: Optional[str] = None,
     end_date: Optional[str] = None,
     category: Optional[str] = None,
     account_type: Optional[str] = None,
+    reconcile_status: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
     try:
-        query = db.query(Transaction)
-        if entity_id is not None:
-            query = query.filter(Transaction.entity_id == entity_id)
+        query = db.query(Transaction).filter(Transaction.entity_id == entity_id)
         if start_date:
             query = query.filter(Transaction.date >= start_date)
         if end_date:
@@ -85,6 +81,8 @@ def list_transactions(
             query = query.filter(Transaction.category == category)
         if account_type:
             query = query.filter(Transaction.account_type == account_type)
+        if reconcile_status:
+            query = query.filter(Transaction.reconcile_status == reconcile_status)
         return query.all()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -102,22 +100,24 @@ def get_transaction(id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.put("/{id}")
-def update_transaction(id: int, update_data: TransactionUpdate, db: Session = Depends(get_db)):
+def update_transaction(id: int, update_data: Dict, db: Session = Depends(get_db)):
     try:
         tx = db.query(Transaction).filter(Transaction.id == id).first()
         if not tx:
             raise HTTPException(status_code=404, detail="Not found")
         
-        if tx.category != update_data.category:
+        if 'category' in update_data and tx.category != update_data['category']:
             feedback = ClassifyFeedback(
                 transaction_id=tx.id,
                 original_category=tx.category,
-                corrected_category=update_data.category
+                corrected_category=update_data['category']
             )
             db.add(feedback)
-            tx.category = update_data.category
             tx.ai_overridden = 1
         
+        for key, value in update_data.items():
+            setattr(tx, key, value)
+            
         db.commit()
         db.refresh(tx)
         return tx
@@ -135,7 +135,7 @@ def delete_transaction(id: int, db: Session = Depends(get_db)):
             raise HTTPException(status_code=404, detail="Not found")
         db.delete(tx)
         db.commit()
-        return {"detail": "Deleted"}
+        return {"message": "Deleted"}
     except HTTPException:
         raise
     except Exception as e:
@@ -155,8 +155,14 @@ def upload_csv(file: UploadFile = File(...), db: Session = Depends(get_db)):
             try:
                 desc = row_data.get("description", "")
                 cls_result = classify(desc)
-                ai_category = cls_result["ai_category"]
-                ai_confidence = cls_result["ai_confidence"]
+                ai_category = cls_result.get("category")
+                ai_confidence = cls_result.get("confidence")
+
+                cash_flow_section = row_data.get("cash_flow_section")
+                if not cash_flow_section or cash_flow_section.strip() == "":
+                    cash_flow_section = None
+                elif cash_flow_section not in ('operating', 'investing', 'financing'):
+                    raise ValueError(f"Invalid cash_flow_section: {cash_flow_section}")
 
                 tx = Transaction(
                     entity_id=int(row_data["entity_id"]),
@@ -165,11 +171,11 @@ def upload_csv(file: UploadFile = File(...), db: Session = Depends(get_db)):
                     amount=float(row_data["amount"]),
                     transaction_type=row_data["transaction_type"],
                     account_type=row_data["account_type"],
-                    cash_flow_section=row_data.get("cash_flow_section"),
+                    cash_flow_section=cash_flow_section,
                     category=ai_category,
                     ai_category=ai_category,
                     ai_confidence=ai_confidence,
-                    cash_impact=1 if row_data.get("cash_flow_section") else 0
+                    cash_impact=1 if cash_flow_section else 0
                 )
                 db.add(tx)
                 db.commit()
