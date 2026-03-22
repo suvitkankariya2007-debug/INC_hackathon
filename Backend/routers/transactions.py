@@ -83,7 +83,7 @@ def list_transactions(
             query = query.filter(Transaction.account_type == account_type)
         if reconcile_status:
             query = query.filter(Transaction.reconcile_status == reconcile_status)
-        return query.all()
+        return query.order_by(Transaction.id.desc()).all()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

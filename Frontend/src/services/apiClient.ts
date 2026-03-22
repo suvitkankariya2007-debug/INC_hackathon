@@ -12,7 +12,7 @@ import {
   TransactionFilters,
 } from '../types'
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000'
+const API_BASE_URL = (import.meta as any).env?.VITE_API_URL || 'http://localhost:8000'
 
 class ApiClient {
   private client: AxiosInstance
@@ -52,7 +52,13 @@ class ApiClient {
   // ============ TRANSACTIONS ============
   async getTransactions(filters?: TransactionFilters): Promise<PaginatedResponse<Transaction>> {
     const response = await this.client.get('/transactions', { params: filters })
-    return response.data
+    return {
+      items: Array.isArray(response.data) ? response.data : response.data.items || [],
+      total: Array.isArray(response.data) ? response.data.length : response.data.total || 0,
+      page: 1,
+      limit: Array.isArray(response.data) ? response.data.length : 0,
+      total_pages: 1
+    }
   }
 
   async getTransaction(id: number): Promise<Transaction> {
