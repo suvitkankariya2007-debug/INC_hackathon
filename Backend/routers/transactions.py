@@ -4,11 +4,11 @@ from pydantic import BaseModel
 from typing import List, Optional, Dict
 import csv
 import io
-from ..database import get_db
-from ..models.transaction import Transaction
-from ..models.classify_feedback import ClassifyFeedback
-from ..services.classifier import classify
-from ..services.hash_chain import create_block
+from database import get_db
+from models.transaction import Transaction
+from models.classify_feedback import ClassifyFeedback
+from services.classifier import classify
+from services.hash_chain import create_block
 
 router = APIRouter(prefix="/transactions", tags=["Transactions"])
 

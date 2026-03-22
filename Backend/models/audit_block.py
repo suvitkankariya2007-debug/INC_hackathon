@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, text
-from ..database import Base
+from database import Base
 
 class AuditBlock(Base):
     __tablename__ = "audit_blocks"

@@ -1,9 +1,9 @@
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
-from ..database import get_db
-from ..services.classifier import classify
-from ..models.classify_feedback import ClassifyFeedback
+from database import get_db
+from services.classifier import classify
+from models.classify_feedback import ClassifyFeedback
 
 router = APIRouter(prefix="/classify", tags=["Classify"])
 

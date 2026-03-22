@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from ..models.transaction import Transaction
+from models.transaction import Transaction
 import numpy as np
 from datetime import datetime
 from collections import defaultdict

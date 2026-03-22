@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, text
-from ..database import Base
+from database import Base
 
 class ClassifyFeedback(Base):
     __tablename__ = "classify_feedback"

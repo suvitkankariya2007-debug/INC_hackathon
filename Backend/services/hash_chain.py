@@ -1,6 +1,6 @@
 import hashlib
 from sqlalchemy.orm import Session
-from ..models.audit_block import AuditBlock
+from models.audit_block import AuditBlock
 from datetime import datetime
 
 def create_block(transaction_id: int, db: Session) -> AuditBlock:

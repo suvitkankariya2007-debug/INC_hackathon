@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy.engine import Engine
-from .config import settings
+from config import settings
 import os
 
 db_path_str = settings.DATABASE_URL.replace("sqlite:///", "")

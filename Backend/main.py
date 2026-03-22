@@ -1,8 +1,8 @@
 from fastapi import FastAPI
-from .database import engine, Base
-from .services.classifier import init_classifier
+from database import engine, Base
+from services.classifier import init_classifier
 
-from .routers import entities, transactions, classify, audit, reconcile, analytics, statements
+from routers import entities, transactions, classify, audit, reconcile, analytics, statements
 
 Base.metadata.create_all(bind=engine)
 

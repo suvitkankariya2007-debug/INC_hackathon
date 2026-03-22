@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from ..database import get_db
-from ..services.hash_chain import verify_chain
+from database import get_db
+from services.hash_chain import verify_chain
 
 router = APIRouter(prefix="/audit", tags=["Audit"])
 
