@@ -61,7 +61,7 @@ Office Supplies
 Return only the category name.
 """
 
-        response = client.chat.completions.create( model="gpt-4.1-mini",
+        response = client.chat.completions.create( model="gpt-4o-mini",
             messages=[
                 {"role": "user", "content": prompt}
             ]
