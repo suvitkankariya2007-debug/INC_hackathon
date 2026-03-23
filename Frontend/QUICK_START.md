@@ -221,8 +221,8 @@ npm run dev -- --port 3001
 
 ### Immediate (After Backend Setup)
 1. Run `npm install`
-2. Run `npm run dev`
-3. Open http://localhost:3000
+2. Run `npm run dev
+3. Open  http://127.0.0.1:8000/...
 4. Test each page and verify data flows from backend
 
 ### Short Term (1-2 days)

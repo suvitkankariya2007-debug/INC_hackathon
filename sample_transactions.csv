@@ -1,0 +1,7 @@
+entity_id,date,description,amount,transaction_type,account_type,cash_flow_section
+1,2025-04-01,Office Supplies Purchase,150.50,debit,expense,operating
+1,2025-04-02,Client Payment Received from ABC Corp,5000.00,credit,income,operating
+1,2025-04-03,New Development Laptops,2400.00,debit,asset,investing
+1,2025-04-04,Monthly Cloud Hosting Bill,489.99,debit,expense,operating
+1,2025-04-05,Business Bank Loan Funded,25000.00,credit,liability,financing
+1,2025-04-06,Software Subscription Renewal,120.00,debit,expense,operating

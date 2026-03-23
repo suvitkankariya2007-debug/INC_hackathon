@@ -7,3 +7,6 @@ python-multipart
 rapidfuzz
 scikit-learn
 numpy
+openai
+httpx
+python-dotenv

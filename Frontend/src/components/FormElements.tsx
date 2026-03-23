@@ -90,6 +90,7 @@ interface AlertProps {
   variant?: AlertVariant
   icon?: React.ReactNode
   onClose?: () => void
+  className?: string
 }
 
 const alertVariants = {
@@ -99,8 +100,8 @@ const alertVariants = {
   info: 'bg-blue-50 border-blue-200 text-blue-800',
 }
 
-export const Alert: React.FC<AlertProps> = ({ children, variant = 'info', icon, onClose }) => (
-  <div className={`border rounded-lg p-4 flex items-start gap-3 animate-slideInUp ${alertVariants[variant]}`}>
+export const Alert: React.FC<AlertProps> = ({ children, variant = 'info', icon, onClose, className = '' }) => (
+  <div className={`border rounded-lg p-4 flex items-start gap-3 animate-slideInUp ${alertVariants[variant]} ${className}`}>
     {icon && <div className="text-xl mt-0.5">{icon}</div>}
     <div className="flex-1">{children}</div>
     {onClose && (

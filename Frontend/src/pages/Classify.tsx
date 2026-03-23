@@ -1,8 +1,26 @@
 import React, { useState } from 'react'
-import { Card, Input, Button, Badge, Alert } from '../components'
+import { Card, Input, Select, Button, Badge, Alert } from '../components'
 import { useApp } from '../context/AppContext'
 import { apiClient } from '../services/apiClient'
 import { ClassificationResult } from '../types'
+
+const VALID_CATEGORIES = [
+  'Salary',
+  'Rent',
+  'Utilities',
+  'IT Expense',
+  'Office Supplies',
+  'Travel',
+  'Meals',
+  'Marketing',
+  'Professional Services',
+  'Insurance',
+  'Taxes',
+  'Equipment',
+  'Subscriptions',
+  'Maintenance',
+  'Miscellaneous',
+]
 
 export const Classify: React.FC = () => {
   const { setSuccess, setError, setLoading, state } = useApp()
@@ -33,13 +51,13 @@ export const Classify: React.FC = () => {
 
   const handleSubmitFeedback = async () => {
     if (!feedback.trim() || !result) {
-      setError('Please provide corrected category')
+      setError('Please select a corrected category')
       return
     }
 
     try {
       setLoading(true)
-      await apiClient.submitClassifyFeedback(0, result.category, feedback)
+      await apiClient.submitClassifyFeedback(null, result.category, feedback)
       setSuccess(`Feedback recorded! This helps improve our model.`)
       setInput('')
       setResult(null)
@@ -119,11 +137,14 @@ export const Classify: React.FC = () => {
                 </Alert>
               )}
               <div className="mt-4 flex gap-3 items-end">
-                <Input
-                  label="If incorrect, provide the right category"
-                  placeholder="Enter correct category..."
+                <Select
+                  label="If incorrect, select the right category"
                   value={feedback}
                   onChange={(e) => setFeedback(e.target.value)}
+                  options={[
+                    { value: '', label: '-- Select correct category --' },
+                    ...VALID_CATEGORIES.map((cat) => ({ value: cat, label: cat })),
+                  ]}
                 />
                 <Button
                   onClick={handleSubmitFeedback}

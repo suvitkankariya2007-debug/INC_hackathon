@@ -35,6 +35,7 @@ export interface CreateTransactionDTO {
   transaction_type: 'debit' | 'credit'
   account_type: 'asset' | 'liability' | 'equity' | 'income' | 'expense'
   cash_flow_section?: 'operating' | 'investing' | 'financing'
+  category?: string
 }
 
 // Update Transaction DTO
