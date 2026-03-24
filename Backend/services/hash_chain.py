@@ -1,6 +1,6 @@
 import hashlib
 from sqlalchemy.orm import Session
-from ..models.audit_block import AuditBlock
+from models.audit_block import AuditBlock
 from datetime import datetime
 
 def create_block(transaction_id: int, db: Session) -> AuditBlock:
@@ -48,3 +48,4 @@ def verify_chain(db: Session):
         expected_prev_hash = block.block_hash
 
     return {"valid": True, "broken_at": None, "total_blocks": len(blocks)}
+

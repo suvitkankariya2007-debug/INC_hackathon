@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { Card, Table, Amount, Badge, Alert, Button } from '../components'
 import { useApp } from '../context/AppContext'
 import { apiClient } from '../services/apiClient'
-import { AnomalyAlert } from '../types'
+
 
 export const Anomalies: React.FC = () => {
   const { state, setAnomalies, setLoading, setError } = useApp()
@@ -74,7 +74,7 @@ export const Anomalies: React.FC = () => {
     {
       key: 'anomaly_reason' as const,
       label: 'Reason',
-      render: (value: string, row: AnomalyAlert) => (
+      render: (value: string) => (
         <div className="w-64">
           <p className="text-sm font-medium text-gray-700">{value}</p>
           <Badge variant={getSeverityColor(getSeverity(value))} className="mt-2">
@@ -178,31 +178,28 @@ export const Anomalies: React.FC = () => {
         <div className="flex gap-2 flex-wrap">
           <button
             onClick={() => setSortBy('date')}
-            className={`px-4 py-2 rounded-lg transition ${
-              sortBy === 'date'
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            }`}
+            className={`px-4 py-2 rounded-lg transition ${sortBy === 'date'
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
           >
             Sort by Date
           </button>
           <button
             onClick={() => setSortBy('amount')}
-            className={`px-4 py-2 rounded-lg transition ${
-              sortBy === 'amount'
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            }`}
+            className={`px-4 py-2 rounded-lg transition ${sortBy === 'amount'
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
           >
             Sort by Amount
           </button>
           <button
             onClick={() => setSortBy('severity')}
-            className={`px-4 py-2 rounded-lg transition ${
-              sortBy === 'severity'
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            }`}
+            className={`px-4 py-2 rounded-lg transition ${sortBy === 'severity'
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
           >
             Sort by Severity
           </button>
@@ -211,7 +208,7 @@ export const Anomalies: React.FC = () => {
 
       {/* Anomalies Table */}
       <Card>
-        <Table<AnomalyAlert>
+        <Table
           columns={columns}
           data={sortedAnomalies}
           isLoading={state.loading}

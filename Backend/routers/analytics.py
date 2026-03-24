@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import text
-from ..database import get_db
-from ..services.anomaly import run_anomaly_detection
+from database import get_db
+from services.anomaly import run_anomaly_detection
 
 router = APIRouter(prefix="/analytics", tags=["Analytics"])
 
@@ -55,3 +55,4 @@ def monthly_trend(entity_id: int, db: Session = Depends(get_db)):
         return list(trends.values())
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+

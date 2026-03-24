@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, text
-from ..database import Base
+from database import Base
 
 class AuditBlock(Base):
     __tablename__ = "audit_blocks"
@@ -10,3 +10,4 @@ class AuditBlock(Base):
     block_hash = Column(String, nullable=False)
     is_tampered = Column(Integer, default=0)
     created_at = Column(String, server_default=text("datetime('now')"))
+

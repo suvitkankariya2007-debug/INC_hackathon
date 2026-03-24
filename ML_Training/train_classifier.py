@@ -43,6 +43,6 @@ for t, p in zip(test_transactions, predictions):
     print(t, "->", p)
 
 pickle.dump(vectorizer, open("tfidf_vectorizer.pkl", "wb"))
-pickle.dump(model, open("transaction_classifier.pkl", "wb"))
+pickle.dump(model, open("model.pkl", "wb"))
 
 print("Model saved successfully")

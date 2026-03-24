@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Layout } from './components'
-import { Dashboard, Transactions, Anomalies, Classify, Audit } from './pages'
+import { Dashboard, Transactions, Anomalies, Classify, Audit, Login, BalanceSheet, ProfitLoss, Reconciliation, CashFlow, Entities } from './pages'
 import { useApp } from './context/AppContext'
 import { apiClient } from './services/apiClient'
 
 function App() {
-  const { setEntities, setSelectedEntity, setError } = useApp()
-  const [currentPage, setCurrentPage] = useState<'dashboard' | 'transactions' | 'anomalies' | 'classify' | 'audit'>('dashboard')
+  const { state, setEntities, setSelectedEntity, setError } = useApp()
+  const [currentPage, setCurrentPage] = useState<'dashboard' | 'transactions' | 'anomalies' | 'classify' | 'audit' | 'balance-sheet' | 'profit-loss' | 'reconcile' | 'cashflow' | 'entities'>('dashboard')
 
   useEffect(() => {
     initializeApp()
@@ -35,7 +35,7 @@ function App() {
 
   const handleNavigation = () => {
     const hash = window.location.hash.slice(1) || 'dashboard'
-    const validPages = ['dashboard', 'transactions', 'anomalies', 'classify', 'audit']
+    const validPages = ['dashboard', 'transactions', 'anomalies', 'classify', 'audit', 'balance-sheet', 'profit-loss', 'reconcile', 'cashflow', 'entities']
     if (validPages.includes(hash)) {
       setCurrentPage(hash as any)
     }
@@ -46,17 +46,6 @@ function App() {
     window.location.hash = currentPage
   }, [currentPage])
 
-  // Override the layout navigation
-  const originalLayout = Layout
-  const LayoutWithNavigation = (props: any) => {
-    const OriginalLayout = originalLayout
-    return (
-      <OriginalLayout {...props}>
-        {/* Update nav items click handlers */}
-        {props.children}
-      </OriginalLayout>
-    )
-  }
 
   const renderPage = () => {
     switch (currentPage) {
@@ -70,9 +59,23 @@ function App() {
         return <Classify />
       case 'audit':
         return <Audit />
+      case 'balance-sheet':
+        return <BalanceSheet />
+      case 'profit-loss':
+        return <ProfitLoss />
+      case 'reconcile':
+        return <Reconciliation />
+      case 'cashflow':
+        return <CashFlow />
+      case 'entities':
+        return <Entities />
       default:
         return <Dashboard />
     }
+  }
+
+  if (!state.selectedEntityId) {
+    return <Login />
   }
 
   return (

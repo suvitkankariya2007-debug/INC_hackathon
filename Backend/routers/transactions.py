@@ -4,11 +4,11 @@ from pydantic import BaseModel
 from typing import List, Optional, Dict
 import csv
 import io
-from ..database import get_db
-from ..models.transaction import Transaction
-from ..models.classify_feedback import ClassifyFeedback
-from ..services.classifier import classify
-from ..services.hash_chain import create_block
+from database import get_db
+from models.transaction import Transaction
+from models.classify_feedback import ClassifyFeedback
+from services.classifier import classify
+from services.hash_chain import create_block
 
 router = APIRouter(prefix="/transactions", tags=["Transactions"])
 
@@ -20,6 +20,7 @@ class TransactionCreate(BaseModel):
     transaction_type: str
     account_type: str
     cash_flow_section: Optional[str] = None
+    category: Optional[str] = None
 
 class TransactionResponse(BaseModel):
     id: int
@@ -33,6 +34,9 @@ def create_transaction(tx: TransactionCreate, db: Session = Depends(get_db)):
         ai_category = cls_result.get("category")
         ai_confidence = cls_result.get("confidence")
 
+        final_category = tx.category if tx.category else ai_category
+        ai_overridden = 1 if tx.category and tx.category != ai_category else 0
+
         db_tx = Transaction(
             entity_id=tx.entity_id,
             date=tx.date,
@@ -41,14 +45,24 @@ def create_transaction(tx: TransactionCreate, db: Session = Depends(get_db)):
             transaction_type=tx.transaction_type,
             account_type=tx.account_type,
             cash_flow_section=tx.cash_flow_section,
-            category=ai_category,
+            category=final_category,
             ai_category=ai_category,
             ai_confidence=ai_confidence,
+            ai_overridden=ai_overridden,
             cash_impact=1 if tx.cash_flow_section else 0
         )
         db.add(db_tx)
         db.commit()
         db.refresh(db_tx)
+
+        if ai_overridden:
+            feedback = ClassifyFeedback(
+                transaction_id=db_tx.id,
+                original_category=ai_category,
+                corrected_category=final_category
+            )
+            db.add(feedback)
+            db.commit()
 
         create_block(db_tx.id, db)
 
@@ -175,6 +189,7 @@ def upload_csv(file: UploadFile = File(...), db: Session = Depends(get_db)):
                     category=ai_category,
                     ai_category=ai_category,
                     ai_confidence=ai_confidence,
+                    reconcile_status=row_data.get("reconcile_status", "unmatched") or "unmatched",
                     cash_impact=1 if cash_flow_section else 0
                 )
                 db.add(tx)
@@ -190,3 +205,4 @@ def upload_csv(file: UploadFile = File(...), db: Session = Depends(get_db)):
         return {"inserted": inserted, "failed": failed, "errors": errors}
     except Exception as e:
         raise HTTPException(status_code=422, detail=str(e))
+

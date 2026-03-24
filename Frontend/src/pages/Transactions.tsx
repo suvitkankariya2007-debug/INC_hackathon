@@ -1,13 +1,33 @@
 import React, { useEffect, useState } from 'react'
-import { Card, Button, Input, Select, Table, TransactionTypeBadge, StatusBadge, Amount, Alert } from '../components'
+import { Card, Button, Input, Select, Table, TransactionTypeBadge, StatusBadge, Amount, Alert, Badge } from '../components'
 import { useApp } from '../context/AppContext'
 import { apiClient } from '../services/apiClient'
 import { Transaction, CreateTransactionDTO } from '../types'
+
+const VALID_CATEGORIES = [
+  'Salary',
+  'Rent',
+  'Utilities',
+  'IT Expense',
+  'Office Supplies',
+  'Travel',
+  'Meals',
+  'Marketing',
+  'Professional Services',
+  'Insurance',
+  'Taxes',
+  'Equipment',
+  'Subscriptions',
+  'Maintenance',
+  'Miscellaneous',
+]
 
 export const Transactions: React.FC = () => {
   const { state, setTransactions, addTransaction, setLoading, setError, setSuccess } = useApp()
   const [showForm, setShowForm] = useState(false)
   const [showUpload, setShowUpload] = useState(false)
+  const [isClassifying, setIsClassifying] = useState(false)
+  const [aiConfidence, setAiConfidence] = useState<number | null>(null)
   const [filters, setFilters] = useState({
     startDate: '',
     endDate: '',
@@ -21,6 +41,7 @@ export const Transactions: React.FC = () => {
     amount: 0,
     transaction_type: 'debit',
     account_type: 'expense',
+    category: '',
   })
 
   useEffect(() => {
@@ -47,6 +68,21 @@ export const Transactions: React.FC = () => {
     }
   }
 
+  const handleAutoClassify = async () => {
+    if (!formData.description.trim()) return
+
+    try {
+      setIsClassifying(true)
+      const result = await apiClient.classifyText(formData.description)
+      setFormData(prev => ({ ...prev, category: result.category }))
+      setAiConfidence(result.confidence)
+    } catch (err) {
+      console.error('Auto-classification failed', err)
+    } finally {
+      setIsClassifying(false)
+    }
+  }
+
   const handleCreateTransaction = async () => {
     try {
       setLoading(true)
@@ -60,7 +96,9 @@ export const Transactions: React.FC = () => {
         amount: 0,
         transaction_type: 'debit',
         account_type: 'expense',
+        category: '',
       })
+      setAiConfidence(null)
       setShowForm(false)
       setTimeout(() => setSuccess(null), 3000)
     } catch (err: any) {
@@ -77,12 +115,35 @@ export const Transactions: React.FC = () => {
     try {
       setLoading(true)
       const result = await apiClient.uploadTransactionsCSV(file, state.selectedEntityId || 1)
-      setSuccess(`${result.uploaded} transactions uploaded successfully`)
+      setSuccess(`${result.inserted} transactions uploaded successfully`)
       loadTransactions()
       setShowUpload(false)
       setTimeout(() => setSuccess(null), 3000)
     } catch (err: any) {
       setError(err.message || 'Failed to upload transactions')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleCategoryChange = async (txId: number, newCategory: string, originalCategory: string) => {
+    try {
+      setLoading(true)
+      await apiClient.updateTransaction(txId, { category: newCategory })
+
+      // Submit feedback to AI system
+      await apiClient.submitClassifyFeedback(txId, originalCategory, newCategory)
+
+      // Update local state
+      const updatedTransactions = state.transactions.map(t =>
+        t.id === txId ? { ...t, category: newCategory, ai_overridden: true } : t
+      )
+      setTransactions(updatedTransactions)
+
+      setSuccess('Category updated and AI feedback recorded')
+      setTimeout(() => setSuccess(null), 3000)
+    } catch (err: any) {
+      setError(err.message || 'Failed to update category')
     } finally {
       setLoading(false)
     }
@@ -113,10 +174,26 @@ export const Transactions: React.FC = () => {
       key: 'category' as const,
       label: 'Category',
       render: (value: string, row: Transaction) => (
-        <div>
-          <p className="font-medium">{value || '-'}</p>
-          {row.ai_confidence && (
-            <p className="text-xs text-gray-500">{(row.ai_confidence * 100).toFixed(0)}% AI</p>
+        <div className="flex flex-col gap-1 min-w-[150px]">
+          <select
+            value={value || ''}
+            onChange={(e) => handleCategoryChange(row.id, e.target.value, row.ai_category || value || 'Uncategorized')}
+            className="bg-transparent border-none focus:ring-2 focus:ring-blue-500 rounded p-1 font-medium hover:bg-gray-100 transition-colors cursor-pointer"
+          >
+            <option value="">Uncategorized</option>
+            {VALID_CATEGORIES.map(cat => (
+              <option key={cat} value={cat}>{cat}</option>
+            ))}
+          </select>
+          {row.ai_confidence && !row.ai_overridden && (
+            <p className="text-[10px] text-gray-400 uppercase tracking-wider font-bold px-1">
+              {(row.ai_confidence * 100).toFixed(0)}% AI Suggestion
+            </p>
+          )}
+          {row.ai_overridden && (
+            <p className="text-[10px] text-blue-500 uppercase tracking-wider font-bold px-1">
+              ✓ User Verified
+            </p>
           )}
         </div>
       ),
@@ -184,15 +261,36 @@ export const Transactions: React.FC = () => {
               label="Amount"
               placeholder="0.00"
               value={formData.amount || ''}
-              onChange={(e) => setFormData({ ...formData, amount: parseFloat(e.target.value) })}
+              onChange={(e) => setFormData({ ...formData, amount: parseFloat(e.target.value) || 0 })}
             />
             <Input
               label="Description"
               placeholder="Transaction description"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="md:col-span-2"
+              onBlur={handleAutoClassify}
             />
+            <div className="flex items-end gap-2">
+              <div className="flex-1">
+                <Select
+                  label="Category (Auto-classified)"
+                  value={formData.category || ''}
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                  disabled={isClassifying}
+                  options={[
+                    { value: '', label: 'Uncategorized' },
+                    ...VALID_CATEGORIES.map(cat => ({ value: cat, label: cat }))
+                  ]}
+                />
+              </div>
+              {aiConfidence !== null && (
+                <div className="mb-2">
+                  <Badge variant={aiConfidence > 0.8 ? 'success' : aiConfidence > 0.5 ? 'warning' : 'danger'}>
+                    {(aiConfidence * 100).toFixed(0)}% AI
+                  </Badge>
+                </div>
+              )}
+            </div>
             <Select
               label="Type"
               value={formData.transaction_type}
@@ -282,7 +380,7 @@ export const Transactions: React.FC = () => {
 
       {/* Table */}
       <Card>
-        <Table<Transaction>
+        <Table
           columns={columns}
           data={state.transactions}
           isLoading={state.loading}

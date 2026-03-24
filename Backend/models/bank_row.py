@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Float, ForeignKey, text
-from ..database import Base
+from database import Base
 
 class BankRow(Base):
     __tablename__ = "bank_rows"

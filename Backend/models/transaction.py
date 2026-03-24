@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Float, ForeignKey, text
-from ..database import Base
+from database import Base
 
 class Transaction(Base):
     __tablename__ = "transactions"
@@ -20,3 +20,4 @@ class Transaction(Base):
     is_anomaly = Column(Integer, default=0)
     anomaly_reason = Column(String, nullable=True)
     created_at = Column(String, server_default=text("datetime('now')"))
+
