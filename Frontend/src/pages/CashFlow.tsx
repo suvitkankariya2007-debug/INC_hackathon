@@ -7,11 +7,9 @@ export const CashFlow: React.FC = () => {
   const { state, setLoading, setError } = useApp()
   const [cashFlow, setCashFlow] = useState<any>(null)
 
-  // ✅ FIX 1: Set demo-safe default dates
   const [startDate, setStartDate] = useState('2024-09-01')
   const [endDate, setEndDate] = useState('2025-02-28')
 
-  // ✅ FIX 2: Reload when dates change
   useEffect(() => {
     if (state.selectedEntityId) loadCashFlow()
   }, [state.selectedEntityId, startDate, endDate])
@@ -19,14 +17,11 @@ export const CashFlow: React.FC = () => {
   const loadCashFlow = async () => {
     try {
       setLoading(true)
-
-      // ✅ FIX 3: Remove fallback undefined
       const data = await apiClient.getCashFlow(
         state.selectedEntityId!,
         startDate,
         endDate
       )
-
       setCashFlow(data)
       setError(null)
     } catch (err: any) {
@@ -126,11 +121,11 @@ export const CashFlow: React.FC = () => {
             />
           </div>
 
-          {/* ✅ FIX 4: Demo-safe buttons */}
+          {/* Preset buttons — each sets a distinct range within seed data window */}
           <div className="flex gap-2">
             <button
               onClick={() => {
-                setStartDate('2024-09-01')
+                setStartDate('2025-02-01')
                 setEndDate('2025-02-28')
               }}
               className="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium"
@@ -139,7 +134,7 @@ export const CashFlow: React.FC = () => {
             </button>
             <button
               onClick={() => {
-                setStartDate('2024-09-01')
+                setStartDate('2024-12-01')
                 setEndDate('2025-02-28')
               }}
               className="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium"
