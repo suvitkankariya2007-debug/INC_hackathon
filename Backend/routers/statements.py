@@ -19,29 +19,37 @@ def get_balance_sheet(entity_id: int, date: Optional[str] = None, db: Session = 
         
         assets = 0.0
         liabilities = 0.0
-        equity = 0.0
+        equity_base = 0.0  # Original capital/equity transactions
+        income = 0.0
+        expenses = 0.0
         
         for tx in txs:
+            # 1. Calculate traditional BS categories
             if tx.account_type == 'asset':
                 assets += tx.amount if tx.transaction_type == 'debit' else -tx.amount
             elif tx.account_type == 'liability':
                 liabilities += tx.amount if tx.transaction_type == 'credit' else -tx.amount
             elif tx.account_type == 'equity':
-                equity += tx.amount if tx.transaction_type == 'credit' else -tx.amount
+                equity_base += tx.amount if tx.transaction_type == 'credit' else -tx.amount
+            
+            # 2. Calculate P&L components for "Net Profit"
             elif tx.account_type == 'income':
-                # Retained earnings part of equity
-                equity += tx.amount if tx.transaction_type == 'credit' else -tx.amount
+                income += tx.amount if tx.transaction_type == 'credit' else -tx.amount
             elif tx.account_type == 'expense':
-                equity -= tx.amount if tx.transaction_type == 'debit' else -tx.amount
+                expenses += tx.amount if tx.transaction_type == 'debit' else -tx.amount
+        
+        # Total Equity = Stated Equity + Net Profit (Revenue - Expenses)
+        net_profit = income - expenses
+        total_equity = equity_base + net_profit
         
         return {
             "entity_id": entity_id,
             "as_of": date or datetime.now().strftime("%Y-%m-%d"),
             "assets": round(assets, 2),
             "liabilities": round(liabilities, 2),
-            "equity": round(equity, 2),
-            "total_l_e": round(liabilities + equity, 2),
-            "is_balanced": abs(assets - (liabilities + equity)) < 0.01
+            "equity": round(total_equity, 2),
+            "total_l_e": round(liabilities + total_equity, 2),
+            "is_balanced": abs(assets - (liabilities + total_equity)) < 0.01
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -92,25 +100,30 @@ def get_cash_flow(entity_id: int, start_date: Optional[str] = None, end_date: Op
             
         txs = query.all()
         
-        operating = 0.0
-        investing = 0.0
-        financing = 0.0
+        # Initialize the structure the Frontend expects
+        result = {
+            "operating": {"total": 0.0, "items": []},
+            "investing": {"total": 0.0, "items": []},
+            "financing": {"total": 0.0, "items": []}
+        }
         
         for tx in txs:
             val = tx.amount if tx.transaction_type == 'credit' else -tx.amount
-            if tx.cash_flow_section == 'operating':
-                operating += val
-            elif tx.cash_flow_section == 'investing':
-                investing += val
-            elif tx.cash_flow_section == 'financing':
-                financing += val
+            section = tx.cash_flow_section # e.g., 'operating'
+            
+            if section in result:
+                result[section]["total"] += val
+                result[section]["items"].append({
+                    "description": tx.description,
+                    "amount": val,
+                    "category": tx.category
+                })
         
-        return {
-            "operating": round(operating, 2),
-            "investing": round(investing, 2),
-            "financing": round(financing, 2),
-            "net_cash_flow": round(operating + investing + financing, 2)
-        }
+        # Round the totals for clean UI display
+        for section in result:
+            result[section]["total"] = round(result[section]["total"], 2)
+            
+        return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

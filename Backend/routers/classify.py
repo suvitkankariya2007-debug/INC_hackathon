@@ -44,8 +44,14 @@ def classify_text(req: ClassifyRequest):
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 
+
 @router.post("/feedback")
 def submit_feedback(req: FeedbackRequest, db: Session = Depends(get_db)):
+    # 1. Skip database insert if from the Playground (no transaction_id)
+    if req.transaction_id is None:
+        return {"message": "Playground feedback acknowledged (not saved to DB)"}
+
+    # 2. Proceed with DB insert for real transactions
     try:
         feedback = ClassifyFeedback(
             transaction_id=req.transaction_id,
@@ -55,7 +61,9 @@ def submit_feedback(req: FeedbackRequest, db: Session = Depends(get_db)):
         db.add(feedback)
         db.commit()
         return {"message": "Feedback recorded"}
-    except Exception:
+    except Exception as e:
         db.rollback()
+        # Optional: Print the actual error to your terminal so it isn't hidden next time!
+        print(f"Database insertion failed: {e}") 
         raise HTTPException(status_code=422, detail="Failed to store feedback")
 

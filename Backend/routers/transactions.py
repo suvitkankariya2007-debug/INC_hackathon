@@ -24,8 +24,22 @@ class TransactionCreate(BaseModel):
 
 class TransactionResponse(BaseModel):
     id: int
-    category: str
-    ai_confidence: Optional[float]
+    entity_id: int
+    date: str
+    description: str
+    amount: float
+    transaction_type: str
+    account_type: str
+    cash_flow_section: Optional[str] = None
+    category: Optional[str] = None
+    ai_category: Optional[str] = None
+    ai_confidence: Optional[float] = None
+    ai_overridden: Optional[int] = 0
+    reconcile_status: Optional[str] = 'unmatched'
+    is_anomaly: Optional[int] = 0
+
+    class Config:
+        from_attributes = True
 
 @router.post("", response_model=TransactionResponse, status_code=201)
 def create_transaction(tx: TransactionCreate, db: Session = Depends(get_db)):
@@ -66,11 +80,8 @@ def create_transaction(tx: TransactionCreate, db: Session = Depends(get_db)):
 
         create_block(db_tx.id, db)
 
-        return TransactionResponse(
-            id=db_tx.id,
-            category=db_tx.category,
-            ai_confidence=db_tx.ai_confidence
-        )
+        return TransactionResponse.model_validate(db_tx)
+            
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=422, detail=str(e))

@@ -12,6 +12,15 @@ from models.transaction import Transaction
 
 router = APIRouter(prefix="/reconcile", tags=["Reconcile"])
 
+def parse_date_flexible(date_str: str) -> datetime:
+    """Try multiple date formats so CSV and DB dates always parse correctly."""
+    for fmt in ("%Y-%m-%d", "%d-%m-%Y", "%d/%m/%Y", "%m/%d/%Y"):
+        try:
+            return datetime.strptime(date_str.strip(), fmt)
+        except ValueError:
+            continue
+    raise ValueError(f"Cannot parse date: {date_str}")
+
 @router.post("/upload")
 def upload_bank_statement(
     entity_id: int = Form(...),
@@ -26,11 +35,15 @@ def upload_bank_statement(
         
         inserted = 0
         for row_data in reader:
+            # Normalize date to YYYY-MM-DD before storing
+            parsed_date = parse_date_flexible(row_data["date"])
+            normalized_date = parsed_date.strftime("%Y-%m-%d")
+            
             bank_row = BankRow(
                 entity_id=entity_id,
-                date=row_data["date"],
+                date=normalized_date,
                 description=row_data["description"],
-                amount=float(row_data["amount"]),
+                amount=round(float(row_data["amount"]), 2),
                 status='unmatched'
             )
             db.add(bank_row)
@@ -53,20 +66,46 @@ def get_reconciliation_report(entity_id: int, db: Session = Depends(get_db)):
         unmatched = []
         
         for br in bank_rows:
+            if br.status == 'matched' and br.matched_tx_id:
+                tx = next((t for t in transactions if t.id == br.matched_tx_id), None)
+                br_data = {
+                    "id": br.id,
+                    "date": br.date,
+                    "description": br.description,
+                    "amount": br.amount,
+                    "match": {
+                        "id": tx.id,
+                        "date": tx.date,
+                        "description": tx.description,
+                        "score": 100
+                    } if tx else None
+                }
+                matched.append(br_data)
+                continue
+                    
             best_match = None
             best_score = 0
             
-            # Find candidate transactions by amount
+            # Find candidate transactions by amount (with float tolerance)
             candidates = [tx for tx in transactions if abs(tx.amount - br.amount) < 0.01]
             
             for tx in candidates:
-                # 1. Date similarity
-                d1 = datetime.strptime(br.date, "%Y-%m-%d")
-                d2 = datetime.strptime(tx.date, "%Y-%m-%d")
-                days_diff = abs((d1 - d2).days)
-                
-                # 2. Description similarity
-                desc_score = rapidfuzz.fuzz.token_sort_ratio(br.description.lower(), tx.description.lower())
+                # 1. Date similarity - both now normalized to YYYY-MM-DD
+                try:
+                    d1 = parse_date_flexible(br.date)
+                    d2 = parse_date_flexible(tx.date)
+                    days_diff = abs((d1 - d2).days)
+                except ValueError:
+                    days_diff = 999
+
+                # Skip if date too far apart
+                if days_diff > 2:
+                    continue
+
+                # 2. Description similarity using partial_ratio
+                desc_score = rapidfuzz.fuzz.partial_ratio(
+                    br.description.lower(), tx.description.lower()
+                )
                 
                 # Scoring
                 score = desc_score
@@ -79,7 +118,6 @@ def get_reconciliation_report(entity_id: int, db: Session = Depends(get_db)):
                     best_score = score
                     best_match = tx
             
-            # Categorize match
             br_data = {
                 "id": br.id,
                 "date": br.date,
@@ -94,15 +132,15 @@ def get_reconciliation_report(entity_id: int, db: Session = Depends(get_db)):
             }
             
             if best_match and best_score >= 85:
-                 matched.append(br_data)
-                 br.status = 'matched'
-                 br.matched_tx_id = best_match.id
+                matched.append(br_data)
+                br.status = 'matched'
+                br.matched_tx_id = best_match.id
             elif best_match and best_score >= 60:
-                 possible.append(br_data)
-                 br.status = 'possible'
+                possible.append(br_data)
+                br.status = 'possible'
             else:
-                 unmatched.append(br_data)
-                 br.status = 'unmatched'
+                unmatched.append(br_data)
+                br.status = 'unmatched'
                  
         db.commit()
         return {
@@ -125,7 +163,7 @@ def confirm_reconciliation(bank_row_id: int, transaction_id: int, db: Session = 
         tx = db.query(Transaction).filter(Transaction.id == transaction_id).first()
         
         if not br or not tx:
-             raise HTTPException(status_code=404, detail="Bank row or Transaction not found")
+            raise HTTPException(status_code=404, detail="Bank row or Transaction not found")
              
         br.status = 'matched'
         br.matched_tx_id = tx.id
@@ -136,4 +174,3 @@ def confirm_reconciliation(bank_row_id: int, transaction_id: int, db: Session = 
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=str(e))
-

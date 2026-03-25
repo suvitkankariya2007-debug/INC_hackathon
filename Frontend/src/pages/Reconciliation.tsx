@@ -42,14 +42,11 @@ export const Reconciliation: React.FC = () => {
 
     const handleConfirm = async (brId: number, txId: number) => {
         try {
-            setLoading(true)
             await apiClient.confirmReconciliation(brId, txId)
             setSuccess('Transaction reconciled!')
-            loadReport()
+            await loadReport()
         } catch (err: any) {
             setError(err.message)
-        } finally {
-            setLoading(false)
         }
     }
 

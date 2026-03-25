@@ -59,7 +59,10 @@ export const Transactions: React.FC = () => {
         reconcile_status: filters.status,
         limit: 500,
       })
-      setTransactions(response.items)
+      const sortedTransactions = response.items.sort((a: Transaction, b: Transaction) => {
+        return new Date(b.date).getTime() - new Date(a.date).getTime();
+      });
+      setTransactions(sortedTransactions)
       setError(null)
     } catch (err: any) {
       setError(err.message || 'Failed to load transactions')
@@ -185,12 +188,12 @@ export const Transactions: React.FC = () => {
               <option key={cat} value={cat}>{cat}</option>
             ))}
           </select>
-          {row.ai_confidence && !row.ai_overridden && (
+          {row.ai_confidence && !Boolean(row.ai_overridden) && (
             <p className="text-[10px] text-gray-400 uppercase tracking-wider font-bold px-1">
               {(row.ai_confidence * 100).toFixed(0)}% AI Suggestion
             </p>
           )}
-          {row.ai_overridden && (
+          {!!row.ai_overridden && (
             <p className="text-[10px] text-blue-500 uppercase tracking-wider font-bold px-1">
               ✓ User Verified
             </p>
@@ -201,7 +204,7 @@ export const Transactions: React.FC = () => {
     {
       key: 'reconcile_status' as const,
       label: 'Status',
-      render: (value: string) => <StatusBadge status={value} />,
+      render: (value: string) => <StatusBadge status={value || 'unmatched'} />,
     },
     {
       key: 'is_anomaly' as const,

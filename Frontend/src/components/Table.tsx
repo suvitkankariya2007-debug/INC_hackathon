@@ -76,7 +76,7 @@ export const Table = React.forwardRef<HTMLTableElement, TableProps<any>>(
 Table.displayName = 'Table'
 
 // Status badge renderer
-export const StatusBadge: React.FC<{ status: string }> = ({ status }) => {
+export const StatusBadge: React.FC<{ status: string }> = ({ status = 'unmatched' }) => {
   const variants: Record<string, 'success' | 'warning' | 'danger' | 'info'> = {
     matched: 'success',
     possible: 'warning',
@@ -88,7 +88,7 @@ export const StatusBadge: React.FC<{ status: string }> = ({ status }) => {
 }
 
 // Transaction type badge
-export const TransactionTypeBadge: React.FC<{ type: string }> = ({ type }) => {
+export const TransactionTypeBadge: React.FC<{ type: string }> = ({ type = 'debit' }) => {
   const variant = type === 'debit' ? 'danger' : 'success'
   return <Badge variant={variant}>{type.toUpperCase()}</Badge>
 }
