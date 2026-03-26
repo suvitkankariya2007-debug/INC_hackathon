@@ -31,8 +31,8 @@ export const ProfitLoss: React.FC = () => {
         <div className="space-y-6">
             <div className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-800">Profit & Loss</h1>
-                    <p className="text-gray-500 mt-1">Income and Expenses performance</p>
+                    <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">Profit & Loss</h1>
+                    <p className="text-gray-500 dark:text-gray-400 mt-1">Income and Expenses performance</p>
                 </div>
                 <div className="flex items-end gap-4">
                     <Input
@@ -67,9 +67,9 @@ export const ProfitLoss: React.FC = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <Card>
-                            <h3 className="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Income</h3>
-                            <div className="flex justify-between items-center pb-4 border-b">
-                                <span className="font-bold text-gray-700">Total Revenue</span>
+                            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">Income</h3>
+                            <div className="flex justify-between items-center pb-4 border-b border-gray-200 dark:border-gray-700">
+                                <span className="font-bold text-gray-700 dark:text-gray-200">Total Revenue</span>
                                 <span className="text-xl font-bold text-green-600">₹{data.income.toLocaleString()}</span>
                             </div>
                             <div className="mt-4 space-y-3">
@@ -81,15 +81,15 @@ export const ProfitLoss: React.FC = () => {
                         </Card>
 
                         <Card>
-                            <h3 className="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Expenses</h3>
-                            <div className="flex justify-between items-center pb-4 border-b">
-                                <span className="font-bold text-gray-700">Total Operating Expenses</span>
+                            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">Expenses</h3>
+                            <div className="flex justify-between items-center pb-4 border-b border-gray-200 dark:border-gray-700">
+                                <span className="font-bold text-gray-700 dark:text-gray-200">Total Operating Expenses</span>
                                 <span className="text-xl font-bold text-red-600">₹{data.expenses.toLocaleString()}</span>
                             </div>
                             <div className="mt-4 space-y-3">
                                 {Object.entries(data.expenses_by_category).map(([cat, amt]: any) => (
                                     <div key={cat} className="flex justify-between text-sm">
-                                        <span className="text-gray-600">{cat}</span>
+                                        <span className="text-gray-600 dark:text-gray-400">{cat}</span>
                                         <span className="font-medium">₹{amt.toLocaleString()}</span>
                                     </div>
                                 ))}

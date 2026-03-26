@@ -60,7 +60,9 @@ export const Transactions: React.FC = () => {
         limit: 500,
       })
       const sortedTransactions = response.items.sort((a: Transaction, b: Transaction) => {
-        return new Date(b.date).getTime() - new Date(a.date).getTime();
+        const dateB = new Date(b.date).getTime() || 0;
+        const dateA = new Date(a.date).getTime() || 0;
+        return dateB - dateA;
       });
       setTransactions(sortedTransactions)
       setError(null)
@@ -115,17 +117,26 @@ export const Transactions: React.FC = () => {
     const file = e.target.files?.[0]
     if (!file) return
 
+    // Reset input so the same file can be re-uploaded if needed
+    e.target.value = ''
+
     try {
       setLoading(true)
       const result = await apiClient.uploadTransactionsCSV(file, state.selectedEntityId || 1)
-      setSuccess(`${result.inserted} transactions uploaded successfully`)
-      loadTransactions()
+
+      if (result.failed > 0) {
+        setError(`${result.failed} rows failed. First error: ${result.errors[0]?.reason || 'Unknown'}`)
+      } else {
+        setSuccess(`${result.inserted} transactions uploaded successfully`)
+        setTimeout(() => setSuccess(null), 3000)
+      }
+
       setShowUpload(false)
-      setTimeout(() => setSuccess(null), 3000)
     } catch (err: any) {
-      setError(err.message || 'Failed to upload transactions')
+      setError(err.response?.data?.detail || err.message || 'Failed to upload transactions')
     } finally {
-      setLoading(false)
+      setLoading(false)           // setLoading(false) BEFORE loadTransactions
+      await loadTransactions()    // awaited AFTER loading is cleared
     }
   }
 
@@ -181,7 +192,7 @@ export const Transactions: React.FC = () => {
           <select
             value={value || ''}
             onChange={(e) => handleCategoryChange(row.id, e.target.value, row.ai_category || value || 'Uncategorized')}
-            className="bg-transparent border-none focus:ring-2 focus:ring-blue-500 rounded p-1 font-medium hover:bg-gray-100 transition-colors cursor-pointer"
+            className="bg-transparent border-none focus:ring-2 focus:ring-blue-500 rounded p-1 font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer text-gray-800 dark:text-gray-200"
           >
             <option value="">Uncategorized</option>
             {VALID_CATEGORIES.map(cat => (
@@ -189,7 +200,7 @@ export const Transactions: React.FC = () => {
             ))}
           </select>
           {row.ai_confidence && !Boolean(row.ai_overridden) && (
-            <p className="text-[10px] text-gray-400 uppercase tracking-wider font-bold px-1">
+            <p className="text-[10px] text-gray-400 dark:text-gray-500 uppercase tracking-wider font-bold px-1">
               {(row.ai_confidence * 100).toFixed(0)}% AI Suggestion
             </p>
           )}
@@ -217,7 +228,7 @@ export const Transactions: React.FC = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-800">Transactions</h1>
+        <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">Transactions</h1>
         <div className="flex gap-3">
           <Button onClick={() => setShowUpload(!showUpload)} variant="secondary">
             📤 Upload CSV
@@ -240,9 +251,9 @@ export const Transactions: React.FC = () => {
             accept=".csv"
             onChange={handleFileUpload}
             disabled={state.loading}
-            className="block w-full text-sm text-gray-500"
+            className="block w-full text-sm text-gray-500 dark:text-gray-400 file:text-gray-600 dark:file:text-gray-300"
           />
-          <p className="text-xs text-gray-600 mt-2">
+          <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">
             CSV should have columns: date, description, amount, transaction_type, account_type
           </p>
         </Card>

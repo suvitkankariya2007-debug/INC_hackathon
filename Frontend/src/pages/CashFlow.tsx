@@ -7,11 +7,9 @@ export const CashFlow: React.FC = () => {
   const { state, setLoading, setError } = useApp()
   const [cashFlow, setCashFlow] = useState<any>(null)
 
-  // ✅ FIX 1: Set demo-safe default dates
   const [startDate, setStartDate] = useState('2024-09-01')
   const [endDate, setEndDate] = useState('2025-02-28')
 
-  // ✅ FIX 2: Reload when dates change
   useEffect(() => {
     if (state.selectedEntityId) loadCashFlow()
   }, [state.selectedEntityId, startDate, endDate])
@@ -19,14 +17,11 @@ export const CashFlow: React.FC = () => {
   const loadCashFlow = async () => {
     try {
       setLoading(true)
-
-      // ✅ FIX 3: Remove fallback undefined
       const data = await apiClient.getCashFlow(
         state.selectedEntityId!,
         startDate,
         endDate
       )
-
       setCashFlow(data)
       setError(null)
     } catch (err: any) {
@@ -61,15 +56,15 @@ export const CashFlow: React.FC = () => {
       {items && items.length > 0 ? (
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-200">
-              <th className="text-left py-2 text-gray-600 font-medium">Description</th>
-              <th className="text-right py-2 text-gray-600 font-medium">Amount</th>
+            <tr className="border-b border-gray-200 dark:border-gray-700">
+              <th className="text-left py-2 text-gray-600 dark:text-gray-400 font-medium">Description</th>
+              <th className="text-right py-2 text-gray-600 dark:text-gray-400 font-medium">Amount</th>
             </tr>
           </thead>
           <tbody>
             {items.map((item: any, idx: number) => (
-              <tr key={idx} className="border-b border-gray-100 hover:bg-gray-50">
-                <td className="py-2 text-gray-700">{item.description || item.category}</td>
+              <tr key={idx} className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/30">
+                <td className="py-2 text-gray-700 dark:text-gray-300">{item.description || item.category}</td>
                 <td className={`py-2 text-right font-medium ${item.amount < 0 ? 'text-red-600' : 'text-green-600'}`}>
                   {formatAmount(item.amount)}
                 </td>
@@ -77,8 +72,8 @@ export const CashFlow: React.FC = () => {
             ))}
           </tbody>
           <tfoot>
-            <tr className="border-t-2 border-gray-300">
-              <td className="py-3 font-bold text-gray-800">Net {title}</td>
+            <tr className="border-t-2 border-gray-300 dark:border-gray-600">
+              <td className="py-3 font-bold text-gray-800 dark:text-gray-100">Net {title}</td>
               <td className={`py-3 text-right font-bold text-lg ${total < 0 ? 'text-red-600' : 'text-green-600'}`}>
                 {formatAmount(total)}
               </td>
@@ -86,7 +81,7 @@ export const CashFlow: React.FC = () => {
           </tfoot>
         </table>
       ) : (
-        <p className="text-gray-500 text-sm">No transactions in this category.</p>
+        <p className="text-gray-500 dark:text-gray-400 text-sm">No transactions in this category.</p>
       )}
     </Card>
   )
@@ -95,7 +90,7 @@ export const CashFlow: React.FC = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-800">Cash Flow Statement</h1>
+        <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">Cash Flow Statement</h1>
         <Button onClick={loadCashFlow} variant="secondary">
           🔄 Refresh
         </Button>
@@ -105,44 +100,44 @@ export const CashFlow: React.FC = () => {
 
       {/* Date Filters */}
       <Card>
-        <h3 className="text-lg font-bold mb-4 text-gray-800">Filter by Period</h3>
+        <h3 className="text-lg font-bold mb-4 text-gray-800 dark:text-gray-100">Filter by Period</h3>
         <div className="flex gap-4 flex-wrap items-end">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Start Date</label>
             <input
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">End Date</label>
             <input
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
             />
           </div>
 
-          {/* ✅ FIX 4: Demo-safe buttons */}
+          {/* Preset buttons — each sets a distinct range within seed data window */}
           <div className="flex gap-2">
             <button
               onClick={() => {
-                setStartDate('2024-09-01')
+                setStartDate('2025-02-01')
                 setEndDate('2025-02-28')
               }}
-              className="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium"
+              className="px-3 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-lg text-sm font-medium"
             >
               This Month
             </button>
             <button
               onClick={() => {
-                setStartDate('2024-09-01')
+                setStartDate('2024-12-01')
                 setEndDate('2025-02-28')
               }}
-              className="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium"
+              className="px-3 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-lg text-sm font-medium"
             >
               This Quarter
             </button>
@@ -151,7 +146,7 @@ export const CashFlow: React.FC = () => {
                 setStartDate('2024-09-01')
                 setEndDate('2025-02-28')
               }}
-              className="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium"
+              className="px-3 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-lg text-sm font-medium"
             >
               YTD
             </button>
@@ -163,7 +158,7 @@ export const CashFlow: React.FC = () => {
 
       {state.loading && (
         <Card>
-          <p className="text-center text-gray-500 py-8">Loading cash flow data...</p>
+          <p className="text-center text-gray-500 dark:text-gray-400 py-8">Loading cash flow data...</p>
         </Card>
       )}
 
@@ -173,31 +168,30 @@ export const CashFlow: React.FC = () => {
           <Card>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Operating</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Operating</p>
                 <p className={`text-2xl font-bold ${(cashFlow.operating?.total ?? 0) < 0 ? 'text-red-600' : 'text-green-600'}`}>
                   {formatAmount(cashFlow.operating?.total ?? 0)}
                 </p>
               </div>
               <div>
-                <p className="text-sm text-gray-600 mb-1">Investing</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Investing</p>
                 <p className={`text-2xl font-bold ${(cashFlow.investing?.total ?? 0) < 0 ? 'text-red-600' : 'text-green-600'}`}>
                   {formatAmount(cashFlow.investing?.total ?? 0)}
                 </p>
               </div>
               <div>
-                <p className="text-sm text-gray-600 mb-1">Financing</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Financing</p>
                 <p className={`text-2xl font-bold ${(cashFlow.financing?.total ?? 0) < 0 ? 'text-red-600' : 'text-green-600'}`}>
                   {formatAmount(cashFlow.financing?.total ?? 0)}
                 </p>
               </div>
             </div>
 
-            <div className="mt-6 pt-4 border-t-2 border-gray-300 text-center">
-              <p className="text-sm text-gray-600 mb-1">Net Cash Movement</p>
-              <p className={`text-3xl font-bold ${
-                ((cashFlow.operating?.total ?? 0) + (cashFlow.investing?.total ?? 0) + (cashFlow.financing?.total ?? 0)) < 0
+            <div className="mt-6 pt-4 border-t-2 border-gray-300 dark:border-gray-600 text-center">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Net Cash Movement</p>
+              <p className={`text-3xl font-bold ${((cashFlow.operating?.total ?? 0) + (cashFlow.investing?.total ?? 0) + (cashFlow.financing?.total ?? 0)) < 0
                   ? 'text-red-600' : 'text-green-600'
-              }`}>
+                }`}>
                 {formatAmount(
                   (cashFlow.operating?.total ?? 0) +
                   (cashFlow.investing?.total ?? 0) +

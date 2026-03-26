@@ -57,8 +57,8 @@ export const Entities: React.FC = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-800">Entities</h1>
-          <p className="text-gray-600 mt-1">Manage your companies and switch between them</p>
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">Entities</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">Manage your companies and switch between them</p>
         </div>
         <Button onClick={loadEntities} variant="secondary">
           🔄 Refresh
@@ -70,17 +70,17 @@ export const Entities: React.FC = () => {
 
       {/* Create New Entity */}
       <Card>
-        <h2 className="text-xl font-bold mb-4 text-gray-800">Create New Entity</h2>
+        <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-gray-100">Create New Entity</h2>
         <div className="flex gap-3 items-end">
           <div className="flex-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Entity Name</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Entity Name</label>
             <input
               type="text"
               value={newEntityName}
               onChange={(e) => setNewEntityName(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleCreateEntity()}
               placeholder="e.g., Acme Corp, Smith and Sons..."
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
             />
           </div>
           <button
@@ -95,9 +95,9 @@ export const Entities: React.FC = () => {
 
       {/* Entity List */}
       <Card>
-        <h2 className="text-xl font-bold mb-4 text-gray-800">All Entities</h2>
+        <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-gray-100">All Entities</h2>
         {state.loading ? (
-          <p className="text-center text-gray-500 py-8">Loading entities...</p>
+          <p className="text-center text-gray-500 dark:text-gray-400 py-8">Loading entities...</p>
         ) : state.entities.length === 0 ? (
           <Alert variant="info" icon="ℹ️">No entities found. Create one above.</Alert>
         ) : (
@@ -107,8 +107,8 @@ export const Entities: React.FC = () => {
                 key={entity.id}
                 className={`flex items-center justify-between p-4 rounded-lg border-2 transition cursor-pointer ${
                   state.selectedEntityId === entity.id
-                    ? 'border-blue-500 bg-blue-50'
-                    : 'border-gray-200 bg-white hover:border-blue-300 hover:bg-gray-50'
+                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/40'
+                    : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-blue-300 hover:bg-gray-50 dark:hover:bg-gray-750'
                 }`}
                 onClick={() => handleSelectEntity(entity)}
               >
@@ -117,8 +117,8 @@ export const Entities: React.FC = () => {
                     {entity.name.charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-800">{entity.name}</p>
-                    <p className="text-sm text-gray-500">Entity ID: {entity.id}</p>
+                    <p className="font-semibold text-gray-800 dark:text-gray-100">{entity.name}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Entity ID: {entity.id}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -134,8 +134,8 @@ export const Entities: React.FC = () => {
                     }}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                       state.selectedEntityId === entity.id
-                        ? 'bg-blue-100 text-blue-700'
-                        : 'bg-gray-100 hover:bg-blue-100 text-gray-700 hover:text-blue-700'
+                        ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300'
+                        : 'bg-gray-100 dark:bg-gray-700 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-gray-700 dark:text-gray-200 hover:text-blue-700 dark:hover:text-blue-300'
                     }`}
                   >
                     {state.selectedEntityId === entity.id ? '✓ Selected' : 'Switch To'}
@@ -149,17 +149,17 @@ export const Entities: React.FC = () => {
 
       {/* Info Card */}
       <Card>
-        <h3 className="text-lg font-bold mb-3 text-gray-800">About Multi-Entity</h3>
+        <h3 className="text-lg font-bold mb-3 text-gray-800 dark:text-gray-100">About Multi-Entity</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="p-4 bg-blue-50 rounded-lg">
-            <h4 className="font-semibold text-blue-800 mb-2">🏢 Data Isolation</h4>
-            <p className="text-sm text-blue-700">
+          <div className="p-4 bg-blue-50 dark:bg-blue-950/40 rounded-lg">
+            <h4 className="font-semibold text-blue-800 dark:text-blue-300 mb-2">🏢 Data Isolation</h4>
+            <p className="text-sm text-blue-700 dark:text-blue-400">
               Each entity has completely separate transactions, statements, and audit trails.
             </p>
           </div>
-          <div className="p-4 bg-green-50 rounded-lg">
-            <h4 className="font-semibold text-green-800 mb-2">⚡ Instant Switch</h4>
-            <p className="text-sm text-green-700">
+          <div className="p-4 bg-green-50 dark:bg-green-950/40 rounded-lg">
+            <h4 className="font-semibold text-green-800 dark:text-green-300 mb-2">⚡ Instant Switch</h4>
+            <p className="text-sm text-green-700 dark:text-green-400">
               Switching entities reloads all data across every page instantly.
             </p>
           </div>

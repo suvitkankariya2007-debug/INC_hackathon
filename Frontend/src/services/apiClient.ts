@@ -12,7 +12,7 @@ import {
   TransactionFilters,
 } from '../types'
 
-const API_BASE_URL = (import.meta as any).env?.VITE_API_URL || 'http://localhost:8001'
+const API_BASE_URL = (import.meta as any).env?.VITE_API_URL || 'http://localhost:8000'
 
 class ApiClient {
   private client: AxiosInstance
@@ -85,11 +85,10 @@ class ApiClient {
     await this.client.delete(`/transactions/${id}`)
   }
 
-  async uploadTransactionsCSV(file: File, entityId: number): Promise<{ inserted: number; errors: string[] }> {
+  async uploadTransactionsCSV(file: File, entityId: number): Promise<{ inserted: number; failed: number; errors: any[] }> {
     const formData = new FormData()
+    formData.append('entity_id', entityId.toString())   // entity_id FIRST
     formData.append('file', file)
-    formData.append('entity_id', entityId.toString())
-
     const response = await this.client.post('/transactions/upload-csv', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
