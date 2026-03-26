@@ -66,4 +66,3 @@ def submit_feedback(req: FeedbackRequest, db: Session = Depends(get_db)):
         # Optional: Print the actual error to your terminal so it isn't hidden next time!
         print(f"Database insertion failed: {e}") 
         raise HTTPException(status_code=422, detail="Failed to store feedback")
-

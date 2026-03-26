@@ -86,8 +86,8 @@ export const Audit: React.FC = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-800">Audit & Compliance</h1>
-          <p className="text-gray-500 mt-1">SHA-256 blockchain-based audit trail verification</p>
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">Audit & Compliance</h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">SHA-256 blockchain-based audit trail verification</p>
         </div>
         <Button onClick={verifyChain} disabled={checking} variant="primary">
           {checking ? '⏳ Verifying...' : '🔄 Verify Chain'}
@@ -104,8 +104,8 @@ export const Audit: React.FC = () => {
             {animatingVerify ? (
               <>
                 <div className="text-5xl mb-3 animate-pulse">🔍</div>
-                <p className="text-gray-600 text-sm">Verifying block {currentBlock}...</p>
-                <div className="mt-3 bg-gray-200 rounded-full h-2 overflow-hidden">
+                <p className="text-gray-600 dark:text-gray-400 text-sm">Verifying block {currentBlock}...</p>
+                <div className="mt-3 bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
                   <div
                     className="bg-blue-500 h-2 rounded-full transition-all duration-100"
                     style={{
@@ -122,7 +122,7 @@ export const Audit: React.FC = () => {
                 <Badge variant={chainStatus.valid ? 'success' : 'danger'}>
                   {chainStatus.valid ? 'CHAIN VALID' : 'CHAIN BROKEN'}
                 </Badge>
-                <p className="text-xs text-gray-500 mt-2">Hash Chain Integrity</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Hash Chain Integrity</p>
               </>
             ) : (
               <div className="text-gray-400">
@@ -136,10 +136,10 @@ export const Audit: React.FC = () => {
         {/* Total Blocks */}
         <Card>
           <div className="text-center">
-            <p className="text-4xl font-bold text-blue-600">
+            <p className="text-4xl font-bold text-blue-600 dark:text-blue-400">
               {chainStatus?.total_blocks ?? '—'}
             </p>
-            <p className="text-sm text-gray-600 mt-2">Total Audit Blocks</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Total Audit Blocks</p>
             <div className="mt-3 flex justify-center gap-1">
               {Array.from({ length: Math.min(20, chainStatus?.total_blocks || 0) }).map((_, i) => (
                 <div
@@ -160,17 +160,17 @@ export const Audit: React.FC = () => {
         {/* Compliance Score */}
         <Card>
           <div className="text-center">
-            <p className={`text-4xl font-bold ${checking ? 'text-gray-400' : getScoreColor(complianceScore)}`}>
+            <p className={`text-4xl font-bold ${checking ? 'text-gray-400 dark:text-gray-600' : getScoreColor(complianceScore)}`}>
               {checking ? '—' : `${complianceScore}%`}
             </p>
-            <p className="text-sm text-gray-600 mt-2">Compliance Score</p>
-            <div className="mt-3 bg-gray-200 rounded-full h-3 overflow-hidden">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Compliance Score</p>
+            <div className="mt-3 bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
               <div
                 className={`h-3 rounded-full transition-all duration-1000 ${checking ? 'bg-gray-300' : getScoreBg(complianceScore)}`}
                 style={{ width: checking ? '0%' : `${complianceScore}%` }}
               />
             </div>
-            <p className="text-xs text-gray-500 mt-2">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
               {checking ? 'Verifying...' : complianceScore === 100 ? '✓ Fully compliant' : `⚠ ${100 - complianceScore}% blocks need attention`}
             </p>
           </div>
@@ -182,30 +182,30 @@ export const Audit: React.FC = () => {
         {/* Chain Detail */}
         {chainStatus && (
           <Card>
-            <h3 className="text-lg font-bold mb-4 text-gray-800">🔗 Chain Details</h3>
+            <h3 className="text-lg font-bold mb-4 text-gray-800 dark:text-gray-100">🔗 Chain Details</h3>
             <div className="space-y-3">
-              <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
-                <span className="text-sm text-gray-700">Total Blocks</span>
-                <span className="font-bold text-blue-600">{chainStatus.total_blocks}</span>
+              <div className="flex justify-between items-center p-3 bg-blue-50 dark:bg-blue-950/40 rounded-lg">
+                <span className="text-sm text-gray-700 dark:text-gray-300">Total Blocks</span>
+                <span className="font-bold text-blue-600 dark:text-blue-400">{chainStatus.total_blocks}</span>
               </div>
-              <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
-                <span className="text-sm text-gray-700">Hash Algorithm</span>
-                <span className="font-bold text-green-600">SHA-256</span>
+              <div className="flex justify-between items-center p-3 bg-green-50 dark:bg-green-950/40 rounded-lg">
+                <span className="text-sm text-gray-700 dark:text-gray-300">Hash Algorithm</span>
+                <span className="font-bold text-green-600 dark:text-green-400">SHA-256</span>
               </div>
-              <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
-                <span className="text-sm text-gray-700">Genesis Block</span>
-                <span className="font-mono text-xs text-purple-600">{'0'.repeat(16)}...</span>
+              <div className="flex justify-between items-center p-3 bg-purple-50 dark:bg-purple-950/40 rounded-lg">
+                <span className="text-sm text-gray-700 dark:text-gray-300">Genesis Block</span>
+                <span className="font-mono text-xs text-purple-600 dark:text-purple-400">{'0'.repeat(16)}...</span>
               </div>
-              <div className={`flex justify-between items-center p-3 rounded-lg ${chainStatus.valid ? 'bg-green-50' : 'bg-red-50'
+              <div className={`flex justify-between items-center p-3 rounded-lg ${chainStatus.valid ? 'bg-green-50 dark:bg-green-950/40' : 'bg-red-50 dark:bg-red-950/40'
                 }`}>
-                <span className="text-sm text-gray-700">Chain Integrity</span>
+                <span className="text-sm text-gray-700 dark:text-gray-300">Chain Integrity</span>
                 <Badge variant={chainStatus.valid ? 'success' : 'danger'}>
                   {chainStatus.valid ? 'INTACT' : `BROKEN @ Block ${chainStatus.broken_at}`}
                 </Badge>
               </div>
-              <div className="flex justify-between items-center p-3 bg-orange-50 rounded-lg">
-                <span className="text-sm text-gray-700">Last Verified</span>
-                <span className="text-sm text-orange-600">{new Date().toLocaleString()}</span>
+              <div className="flex justify-between items-center p-3 bg-orange-50 dark:bg-orange-950/40 rounded-lg">
+                <span className="text-sm text-gray-700 dark:text-gray-300">Last Verified</span>
+                <span className="text-sm text-orange-600 dark:text-orange-400">{new Date().toLocaleString()}</span>
               </div>
             </div>
 
@@ -226,9 +226,9 @@ export const Audit: React.FC = () => {
 
         {/* Verification Log */}
         <Card>
-          <h3 className="text-lg font-bold mb-4 text-gray-800">📋 Verification Log</h3>
+          <h3 className="text-lg font-bold mb-4 text-gray-800 dark:text-gray-100">📋 Verification Log</h3>
           {verificationLogs.length === 0 ? (
-            <div className="text-center py-8 text-gray-400">
+            <div className="text-center py-8 text-gray-400 dark:text-gray-500">
               <p className="text-4xl mb-3">📝</p>
               <p className="text-sm">No verifications run yet</p>
               <p className="text-xs mt-1">Click "Verify Chain" to start</p>
@@ -239,8 +239,8 @@ export const Audit: React.FC = () => {
                 <div
                   key={log.id}
                   className={`flex items-center justify-between p-3 rounded-lg border transition-all ${log.result === 'pass'
-                    ? 'bg-green-50 border-green-200'
-                    : 'bg-red-50 border-red-200'
+                    ? 'bg-green-50 dark:bg-green-950/40 border-green-200 dark:border-green-800'
+                    : 'bg-red-50 dark:bg-red-950/40 border-red-200 dark:border-red-800'
                     }`}
                 >
                   <div className="flex items-center gap-3">
@@ -248,13 +248,13 @@ export const Audit: React.FC = () => {
                       {log.result === 'pass' ? '✓' : '✕'}
                     </span>
                     <div>
-                      <p className="text-sm font-medium text-gray-800">
+                      <p className="text-sm font-medium text-gray-800 dark:text-gray-100">
                         Chain verification {log.result === 'pass' ? 'passed' : 'failed'}
                       </p>
-                      <p className="text-xs text-gray-500">{log.blocks} blocks checked in {log.duration}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{log.blocks} blocks checked in {log.duration}</p>
                     </div>
                   </div>
-                  <span className="text-xs text-gray-500">{log.time}</span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">{log.time}</span>
                 </div>
               ))}
             </div>
@@ -264,12 +264,12 @@ export const Audit: React.FC = () => {
 
       {/* How It Works */}
       <Card>
-        <h3 className="text-lg font-bold mb-6 text-gray-800">How Hash Chain Works</h3>
+        <h3 className="text-lg font-bold mb-6 text-gray-800 dark:text-gray-100">How Hash Chain Works</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border border-blue-200">
-            <h4 className="font-bold text-blue-900 mb-2">1️⃣ Block Creation</h4>
-            <p className="text-sm text-blue-800">Each transaction creates a SHA-256 hash block containing:</p>
-            <ul className="text-xs text-blue-700 mt-2 space-y-1">
+          <div className="p-4 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/40 dark:to-blue-800/40 rounded-lg border border-blue-200 dark:border-blue-800">
+            <h4 className="font-bold text-blue-900 dark:text-blue-200 mb-2">1️⃣ Block Creation</h4>
+            <p className="text-sm text-blue-800 dark:text-blue-300">Each transaction creates a SHA-256 hash block containing:</p>
+            <ul className="text-xs text-blue-700 dark:text-blue-400 mt-2 space-y-1">
               <li>• Block number</li>
               <li>• Transaction ID</li>
               <li>• Previous block hash</li>
@@ -277,19 +277,19 @@ export const Audit: React.FC = () => {
             </ul>
           </div>
 
-          <div className="p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-lg border border-green-200">
-            <h4 className="font-bold text-green-900 mb-2">2️⃣ Chain Linking</h4>
-            <p className="text-sm text-green-800">Each block references the previous block's hash:</p>
-            <div className="text-xs text-green-700 mt-2 font-mono bg-white p-2 rounded">
+          <div className="p-4 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/40 dark:to-green-800/40 rounded-lg border border-green-200 dark:border-green-800">
+            <h4 className="font-bold text-green-900 dark:text-green-200 mb-2">2️⃣ Chain Linking</h4>
+            <p className="text-sm text-green-800 dark:text-green-300">Each block references the previous block's hash:</p>
+            <div className="text-xs text-green-700 dark:text-green-400 mt-2 font-mono bg-white dark:bg-gray-800 p-2 rounded">
               Block N → Hash(Block N-1)
             </div>
-            <p className="text-xs text-green-700 mt-2">Genesis block starts with '0' hash</p>
+            <p className="text-xs text-green-700 dark:text-green-400 mt-2">Genesis block starts with '0' hash</p>
           </div>
 
-          <div className="p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg border border-purple-200">
-            <h4 className="font-bold text-purple-900 mb-2">3️⃣ Tamper Detection</h4>
-            <p className="text-sm text-purple-800">Any alteration breaks the chain:</p>
-            <ul className="text-xs text-purple-700 mt-2 space-y-1">
+          <div className="p-4 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/40 dark:to-purple-800/40 rounded-lg border border-purple-200 dark:border-purple-800">
+            <h4 className="font-bold text-purple-900 dark:text-purple-200 mb-2">3️⃣ Tamper Detection</h4>
+            <p className="text-sm text-purple-800 dark:text-purple-300">Any alteration breaks the chain:</p>
+            <ul className="text-xs text-purple-700 dark:text-purple-400 mt-2 space-y-1">
               <li>• Changing a transaction</li>
               <li>• Reordering transactions</li>
               <li>• Inserting false entries</li>
@@ -300,40 +300,40 @@ export const Audit: React.FC = () => {
 
       {/* Compliance & Security */}
       <Card>
-        <h3 className="text-lg font-bold mb-4 text-gray-800">Compliance & Security</h3>
+        <h3 className="text-lg font-bold mb-4 text-gray-800 dark:text-gray-100">Compliance & Security</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="flex gap-4 p-4 bg-green-50 rounded-lg border border-green-200">
+          <div className="flex gap-4 p-4 bg-green-50 dark:bg-green-950/40 rounded-lg border border-green-200 dark:border-green-800">
             <span className="text-2xl">✓</span>
             <div>
-              <h4 className="font-semibold text-green-900">Immutable Audit Trail</h4>
-              <p className="text-sm text-green-700">All transactions are recorded in an immutable hash chain, making it impossible to alter past records.</p>
+              <h4 className="font-semibold text-green-900 dark:text-green-200">Immutable Audit Trail</h4>
+              <p className="text-sm text-green-700 dark:text-green-300">All transactions are recorded in an immutable hash chain, making it impossible to alter past records.</p>
               <Badge variant="success" className="mt-2">Active</Badge>
             </div>
           </div>
 
-          <div className="flex gap-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+          <div className="flex gap-4 p-4 bg-blue-50 dark:bg-blue-950/40 rounded-lg border border-blue-200 dark:border-blue-800">
             <span className="text-2xl">🔒</span>
             <div>
-              <h4 className="font-semibold text-blue-900">Cryptographic Protection</h4>
-              <p className="text-sm text-blue-700">SHA-256 hashing ensures even a single bit change creates a completely different hash.</p>
+              <h4 className="font-semibold text-blue-900 dark:text-blue-200">Cryptographic Protection</h4>
+              <p className="text-sm text-blue-700 dark:text-blue-300">SHA-256 hashing ensures even a single bit change creates a completely different hash.</p>
               <Badge variant="primary" className="mt-2">SHA-256</Badge>
             </div>
           </div>
 
-          <div className="flex gap-4 p-4 bg-purple-50 rounded-lg border border-purple-200">
+          <div className="flex gap-4 p-4 bg-purple-50 dark:bg-purple-950/40 rounded-lg border border-purple-200 dark:border-purple-800">
             <span className="text-2xl">📋</span>
             <div>
-              <h4 className="font-semibold text-purple-900">Regulatory Compliance</h4>
-              <p className="text-sm text-purple-700">Tamper-proof evidence for accounting audits and regulatory requirements.</p>
+              <h4 className="font-semibold text-purple-900 dark:text-purple-200">Regulatory Compliance</h4>
+              <p className="text-sm text-purple-700 dark:text-purple-300">Tamper-proof evidence for accounting audits and regulatory requirements.</p>
               <Badge variant="info" className="mt-2">SOX / GDPR</Badge>
             </div>
           </div>
 
-          <div className="flex gap-4 p-4 bg-orange-50 rounded-lg border border-orange-200">
+          <div className="flex gap-4 p-4 bg-orange-50 dark:bg-orange-950/40 rounded-lg border border-orange-200 dark:border-orange-800">
             <span className="text-2xl">📊</span>
             <div>
-              <h4 className="font-semibold text-orange-900">Continuous Verification</h4>
-              <p className="text-sm text-orange-700">Run verification checks regularly to detect unauthorized modifications.</p>
+              <h4 className="font-semibold text-orange-900 dark:text-orange-200">Continuous Verification</h4>
+              <p className="text-sm text-orange-700 dark:text-orange-300">Run verification checks regularly to detect unauthorized modifications.</p>
               <Badge variant="warning" className="mt-2">
                 {verificationLogs.length > 0 ? `${verificationLogs.length} checks today` : 'Run first check'}
               </Badge>
@@ -344,31 +344,31 @@ export const Audit: React.FC = () => {
 
       {/* Recommended Actions */}
       <Card>
-        <h3 className="text-lg font-bold mb-4 text-gray-800">Recommended Actions</h3>
+        <h3 className="text-lg font-bold mb-4 text-gray-800 dark:text-gray-100">Recommended Actions</h3>
         <div className="space-y-3">
-          <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg border border-green-200">
+          <div className="flex items-center gap-3 p-3 bg-green-50 dark:bg-green-950/40 rounded-lg border border-green-200 dark:border-green-800">
             <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center text-white text-xs">✓</div>
             <label className="flex-1">
-              <p className="font-medium text-gray-800">Verify chain integrity daily</p>
-              <p className="text-sm text-gray-600">Run verification checks at end of business day</p>
+              <p className="font-medium text-gray-800 dark:text-gray-100">Verify chain integrity daily</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Run verification checks at end of business day</p>
             </label>
             <Badge variant="success">Done</Badge>
           </div>
 
-          <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+          <div className="flex items-center gap-3 p-3 bg-blue-50 dark:bg-blue-950/40 rounded-lg border border-blue-200 dark:border-blue-800">
             <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs">✓</div>
             <label className="flex-1">
-              <p className="font-medium text-gray-800">Export audit reports monthly</p>
-              <p className="text-sm text-gray-600">Generate and archive hash chain verification reports</p>
+              <p className="font-medium text-gray-800 dark:text-gray-100">Export audit reports monthly</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Generate and archive hash chain verification reports</p>
             </label>
             <Badge variant="primary">Scheduled</Badge>
           </div>
 
-          <div className="flex items-center gap-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+          <div className="flex items-center gap-3 p-3 bg-yellow-50 dark:bg-yellow-950/40 rounded-lg border border-yellow-200 dark:border-yellow-800">
             <div className="w-6 h-6 rounded-full bg-yellow-500 flex items-center justify-center text-white text-xs">!</div>
             <label className="flex-1">
-              <p className="font-medium text-gray-800">Set up alerts for chain breaks</p>
-              <p className="text-sm text-gray-600">Receive notifications if tampering is detected</p>
+              <p className="font-medium text-gray-800 dark:text-gray-100">Set up alerts for chain breaks</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Receive notifications if tampering is detected</p>
             </label>
             <Badge variant="warning">Pending</Badge>
           </div>

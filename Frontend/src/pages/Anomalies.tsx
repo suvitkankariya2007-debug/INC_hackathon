@@ -69,14 +69,14 @@ export const Anomalies: React.FC = () => {
     {
       key: 'amount' as const,
       label: 'Amount',
-      render: (value: number) => <Amount value={value} color={true} />,
+      render: (value: number) => <Amount value={value} />,
     },
     {
       key: 'anomaly_reason' as const,
       label: 'Reason',
       render: (value: string) => (
         <div className="w-64">
-          <p className="text-sm font-medium text-gray-700">{value}</p>
+          <p className="text-sm font-medium text-gray-700 dark:text-gray-200">{value}</p>
           <Badge variant={getSeverityColor(getSeverity(value))} className="mt-2">
             {getSeverity(value).toUpperCase()}
           </Badge>
@@ -100,7 +100,7 @@ export const Anomalies: React.FC = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-800">Anomaly Detection</h1>
+        <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">Anomaly Detection</h1>
         <Button onClick={loadAnomalies} variant="secondary">
           🔄 Refresh
         </Button>
@@ -112,61 +112,61 @@ export const Anomalies: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <Card>
           <div className="text-center">
-            <p className="text-3xl font-bold text-red-600">{state.anomalies.length}</p>
-            <p className="text-sm text-gray-600 mt-2">Total Anomalies</p>
+            <p className="text-3xl font-bold text-red-600 dark:text-red-400">{state.anomalies.length}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Total Anomalies</p>
           </div>
         </Card>
         <Card>
           <div className="text-center">
-            <p className="text-3xl font-bold text-orange-600">{anomalyTypeBreakdown.statistical}</p>
-            <p className="text-sm text-gray-600 mt-2">Statistical</p>
+            <p className="text-3xl font-bold text-orange-600 dark:text-orange-400">{anomalyTypeBreakdown.statistical}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Statistical</p>
           </div>
         </Card>
         <Card>
           <div className="text-center">
-            <p className="text-3xl font-bold text-yellow-600">{anomalyTypeBreakdown.duplicate}</p>
-            <p className="text-sm text-gray-600 mt-2">Duplicates</p>
+            <p className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">{anomalyTypeBreakdown.duplicate}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Duplicates</p>
           </div>
         </Card>
         <Card>
           <div className="text-center">
-            <p className="text-3xl font-bold text-purple-600">{anomalyTypeBreakdown.pattern}</p>
-            <p className="text-sm text-gray-600 mt-2">Patterns</p>
+            <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">{anomalyTypeBreakdown.pattern}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Patterns</p>
           </div>
         </Card>
         <Card>
           <div className="text-center">
-            <p className="text-3xl font-bold text-indigo-600">{anomalyTypeBreakdown.logical}</p>
-            <p className="text-sm text-gray-600 mt-2">Logical</p>
+            <p className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">{anomalyTypeBreakdown.logical}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Logical</p>
           </div>
         </Card>
       </div>
 
       {/* Detection Methods Info */}
       <Card>
-        <h3 className="text-lg font-bold mb-4 text-gray-800">How We Detect Anomalies</h3>
+        <h3 className="text-lg font-bold mb-4 text-gray-800 dark:text-gray-100">How We Detect Anomalies</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="p-4 bg-orange-50 rounded-lg">
-            <h4 className="font-semibold text-orange-800 mb-2">📊 Statistical Outliers</h4>
-            <p className="text-sm text-orange-700">
+          <div className="p-4 bg-orange-50 dark:bg-orange-950/40 rounded-lg">
+            <h4 className="font-semibold text-orange-800 dark:text-orange-300 mb-2">📊 Statistical Outliers</h4>
+            <p className="text-sm text-orange-700 dark:text-orange-400">
               Amounts more than 3 standard deviations from category mean (0.15% outliers)
             </p>
           </div>
-          <div className="p-4 bg-yellow-50 rounded-lg">
-            <h4 className="font-semibold text-yellow-800 mb-2">📋 Duplicate Detection</h4>
-            <p className="text-sm text-yellow-700">
+          <div className="p-4 bg-yellow-50 dark:bg-yellow-950/40 rounded-lg">
+            <h4 className="font-semibold text-yellow-800 dark:text-yellow-300 mb-2">📋 Duplicate Detection</h4>
+            <p className="text-sm text-yellow-700 dark:text-yellow-400">
               Identical description and amount within 2-day windows
             </p>
           </div>
-          <div className="p-4 bg-purple-50 rounded-lg">
-            <h4 className="font-semibold text-purple-800 mb-2">🔗 Pattern Analysis</h4>
-            <p className="text-sm text-purple-700">
+          <div className="p-4 bg-purple-50 dark:bg-purple-950/40 rounded-lg">
+            <h4 className="font-semibold text-purple-800 dark:text-purple-300 mb-2">🔗 Pattern Analysis</h4>
+            <p className="text-sm text-purple-700 dark:text-purple-400">
               Behavioral clustering and unusual payment patterns detected
             </p>
           </div>
-          <div className="p-4 bg-indigo-50 rounded-lg">
-            <h4 className="font-semibold text-indigo-800 mb-2">✓ Logical Rules</h4>
-            <p className="text-sm text-indigo-700">
+          <div className="p-4 bg-indigo-50 dark:bg-indigo-950/40 rounded-lg">
+            <h4 className="font-semibold text-indigo-800 dark:text-indigo-300 mb-2">✓ Logical Rules</h4>
+            <p className="text-sm text-indigo-700 dark:text-indigo-400">
               Validates transaction type vs account type combinations
             </p>
           </div>
@@ -180,7 +180,7 @@ export const Anomalies: React.FC = () => {
             onClick={() => setSortBy('date')}
             className={`px-4 py-2 rounded-lg transition ${sortBy === 'date'
               ? 'bg-blue-600 text-white'
-              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
               }`}
           >
             Sort by Date
@@ -189,7 +189,7 @@ export const Anomalies: React.FC = () => {
             onClick={() => setSortBy('amount')}
             className={`px-4 py-2 rounded-lg transition ${sortBy === 'amount'
               ? 'bg-blue-600 text-white'
-              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
               }`}
           >
             Sort by Amount
@@ -198,7 +198,7 @@ export const Anomalies: React.FC = () => {
             onClick={() => setSortBy('severity')}
             className={`px-4 py-2 rounded-lg transition ${sortBy === 'severity'
               ? 'bg-blue-600 text-white'
-              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
               }`}
           >
             Sort by Severity

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import List, Optional, Dict
@@ -9,8 +9,6 @@ from models.transaction import Transaction
 from models.classify_feedback import ClassifyFeedback
 from services.classifier import classify
 from services.hash_chain import create_block
-from services.utils import normalize_date_to_iso
-from services.anomaly import run_single_transaction_anomaly_check
 
 router = APIRouter(prefix="/transactions", tags=["Transactions"])
 
@@ -55,7 +53,7 @@ def create_transaction(tx: TransactionCreate, db: Session = Depends(get_db)):
 
         db_tx = Transaction(
             entity_id=tx.entity_id,
-            date=normalize_date_to_iso(tx.date),
+            date=tx.date,
             description=tx.description,
             amount=tx.amount,
             transaction_type=tx.transaction_type,
@@ -81,9 +79,6 @@ def create_transaction(tx: TransactionCreate, db: Session = Depends(get_db)):
             db.commit()
 
         create_block(db_tx.id, db)
-        
-        # Real-time Anomaly Detection Trigger
-        run_single_transaction_anomaly_check(db_tx, db)
 
         return TransactionResponse.model_validate(db_tx)
             
@@ -173,49 +168,76 @@ def delete_transaction(id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/upload-csv")
-def upload_csv(file: UploadFile = File(...), db: Session = Depends(get_db)):
+def upload_csv(file: UploadFile = File(...), entity_id: int = Form(...), db: Session = Depends(get_db)):
     try:
-        content = file.file.read().decode("utf-8")
+        raw_content = file.file.read()
+        try:
+            content = raw_content.decode("utf-8-sig")
+        except UnicodeDecodeError:
+            try:
+                content = raw_content.decode("latin-1")
+            except Exception:
+                raise HTTPException(status_code=422, detail="Invalid file encoding. Please use UTF-8.")
+        
         reader = csv.DictReader(io.StringIO(content))
+        if not reader.fieldnames:
+             raise HTTPException(status_code=422, detail="CSV file is empty or invalid.")
+
+        # Header normalization and mapping
+        def normalize(s): return s.lower().strip().replace(" ", "_").replace("-", "_")
+        
+        mapping = {normalize(h): h for h in reader.fieldnames}
+        
+        # Required normalized keys
+        required = ["date", "description", "amount", "transaction_type", "account_type"]
+        missing = [r for r in required if r not in mapping]
+        if missing:
+            raise HTTPException(status_code=422, detail=f"Missing required columns: {', '.join(missing)}")
+
         inserted = 0
         failed = 0
         errors = []
 
         for row_num, row_data in enumerate(reader, start=1):
             try:
-                desc = row_data.get("description", "")
+                date_raw = row_data.get(mapping["date"])
+                desc = row_data.get(mapping["description"], "")
+                amount_raw = row_data.get(mapping["amount"])
+                ttype = row_data.get(mapping["transaction_type"])
+                atype = row_data.get(mapping["account_type"])
+
+                cash_flow_section = row_data.get(mapping.get("cash_flow_section", ""), None)
+                if not cash_flow_section or cash_flow_section.strip() == "":
+                    cash_flow_section = None
+                else:
+                    cash_flow_section = cash_flow_section.strip().lower()
+                    if cash_flow_section not in ('operating', 'investing', 'financing'):
+                        cash_flow_section = None
+
+                reconcile_status = row_data.get(mapping.get("reconcile_status", ""), "unmatched") or "unmatched"
+
                 cls_result = classify(desc)
                 ai_category = cls_result.get("category")
                 ai_confidence = cls_result.get("confidence")
 
-                cash_flow_section = row_data.get("cash_flow_section")
-                if not cash_flow_section or cash_flow_section.strip() == "":
-                    cash_flow_section = None
-                elif cash_flow_section not in ('operating', 'investing', 'financing'):
-                    raise ValueError(f"Invalid cash_flow_section: {cash_flow_section}")
-
                 tx = Transaction(
-                    entity_id=int(row_data["entity_id"]),
-                    date=normalize_date_to_iso(row_data["date"]),
+                    entity_id=entity_id,  # Always use form param, NEVER CSV column
+                    date=date_raw,
                     description=desc,
-                    amount=float(row_data["amount"]),
-                    transaction_type=row_data["transaction_type"],
-                    account_type=row_data["account_type"],
+                    amount=float(amount_raw),
+                    transaction_type=ttype,
+                    account_type=atype,
                     cash_flow_section=cash_flow_section,
                     category=ai_category,
                     ai_category=ai_category,
                     ai_confidence=ai_confidence,
-                    reconcile_status=row_data.get("reconcile_status", "unmatched") or "unmatched",
+                    reconcile_status=reconcile_status,
                     cash_impact=1 if cash_flow_section else 0
                 )
                 db.add(tx)
                 db.commit()
                 db.refresh(tx)
                 create_block(tx.id, db)
-                
-                # Real-time Anomaly Detection Trigger
-                run_single_transaction_anomaly_check(tx, db)
-                
                 inserted += 1
             except Exception as row_e:
                 db.rollback()
@@ -223,6 +245,7 @@ def upload_csv(file: UploadFile = File(...), db: Session = Depends(get_db)):
                 errors.append({"row": row_num, "reason": str(row_e)})
 
         return {"inserted": inserted, "failed": failed, "errors": errors}
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=422, detail=str(e))
-

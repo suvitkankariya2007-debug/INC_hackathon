@@ -33,4 +33,3 @@ def create_entity(entity: EntityCreate, db: Session = Depends(get_db)):
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=422, detail=str(e))
-

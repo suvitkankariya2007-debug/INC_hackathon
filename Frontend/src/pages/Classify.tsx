@@ -80,8 +80,8 @@ export const Classify: React.FC = () => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-800">AI Classification Playground</h1>
-        <p className="text-gray-600 mt-2">Test our transaction categorization engine</p>
+        <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">AI Classification Playground</h1>
+        <p className="text-gray-600 dark:text-gray-400 mt-2">Test our transaction categorization engine</p>
       </div>
 
       {state.error && <Alert variant="danger" icon="✕">{state.error}</Alert>}
@@ -89,7 +89,7 @@ export const Classify: React.FC = () => {
 
       {/* Main Classifier Card */}
       <Card>
-        <h2 className="text-xl font-bold mb-6 text-gray-800">Classify Transaction</h2>
+        <h2 className="text-xl font-bold mb-6 text-gray-800 dark:text-gray-100">Classify Transaction</h2>
         <div className="space-y-4">
           <Input
             label="Transaction Description"
@@ -105,19 +105,19 @@ export const Classify: React.FC = () => {
 
         {/* Result */}
         {result && (
-          <div className="mt-8 p-6 bg-blue-50 rounded-lg border-2 border-blue-200">
-            <h3 className="text-lg font-bold text-gray-800 mb-4">Classification Result</h3>
+          <div className="mt-8 p-6 bg-blue-50 dark:bg-blue-950/40 rounded-lg border-2 border-blue-200 dark:border-blue-800">
+            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">Classification Result</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <p className="text-sm text-gray-600 mb-2">Predicted Category</p>
-                <p className="text-2xl font-bold text-blue-600">{result.category}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Predicted Category</p>
+                <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{result.category}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-600 mb-2">Confidence Score</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Confidence Score</p>
                 <div className="flex items-center gap-4">
-                  <div className="flex-1 bg-gray-200 rounded-full h-3">
+                  <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-3">
                     <div
-                      className="bg-blue-600 h-3 rounded-full transition-all"
+                      className="bg-blue-600 dark:bg-blue-500 h-3 rounded-full transition-all"
                       style={{ width: `${result.confidence * 100}%` }}
                     />
                   </div>
@@ -129,8 +129,8 @@ export const Classify: React.FC = () => {
             </div>
 
             {/* Feedback Section */}
-            <div className="mt-6 p-4 bg-white rounded-lg border border-gray-200">
-              <h4 className="font-semibold text-gray-800 mb-4">Is this correct?</h4>
+            <div className="mt-6 p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+              <h4 className="font-semibold text-gray-800 dark:text-gray-100 mb-4">Is this correct?</h4>
               {result.confidence < 0.7 && (
                 <Alert variant="warning" icon="⚠️">
                   Low confidence - please verify this classification
@@ -161,21 +161,21 @@ export const Classify: React.FC = () => {
 
       {/* How it Works */}
       <Card>
-        <h3 className="text-lg font-bold mb-4 text-gray-800">How Classification Works</h3>
+        <h3 className="text-lg font-bold mb-4 text-gray-800 dark:text-gray-100">How Classification Works</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-            <h4 className="font-semibold text-green-800 mb-2">🤖 Machine Learning</h4>
-            <p className="text-sm text-green-700">
+          <div className="p-4 bg-green-50 dark:bg-green-950/40 rounded-lg border border-green-200 dark:border-green-800">
+            <h4 className="font-semibold text-green-800 dark:text-green-300 mb-2">🤖 Machine Learning</h4>
+            <p className="text-sm text-green-700 dark:text-green-400">
               TF-IDF vectorizer + Logistic Regression trained on 80%+ accurate historical data
             </p>
-            <p className="text-xs text-green-600 mt-2">Used when: Always first</p>
+            <p className="text-xs text-green-600 dark:text-green-500 mt-2">Used when: Always first</p>
           </div>
-          <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
-            <h4 className="font-semibold text-purple-800 mb-2">🧠 GPT Fallback</h4>
-            <p className="text-sm text-purple-700">
+          <div className="p-4 bg-purple-50 dark:bg-purple-950/40 rounded-lg border border-purple-200 dark:border-purple-800">
+            <h4 className="font-semibold text-purple-800 dark:text-purple-300 mb-2">🧠 GPT Fallback</h4>
+            <p className="text-sm text-purple-700 dark:text-purple-400">
               OpenAI GPT-4o-mini provides human-like context understanding
             </p>
-            <p className="text-xs text-purple-600 mt-2">Used when: ML confidence &lt; 0.60</p>
+            <p className="text-xs text-purple-600 dark:text-purple-500 mt-2">Used when: ML confidence &lt; 0.60</p>
           </div>
         </div>
       </Card>
@@ -183,16 +183,16 @@ export const Classify: React.FC = () => {
       {/* Recent History */}
       {history.length > 0 && (
         <Card>
-          <h3 className="text-lg font-bold mb-4 text-gray-800">Classification History</h3>
+          <h3 className="text-lg font-bold mb-4 text-gray-800 dark:text-gray-100">Classification History</h3>
           <div className="space-y-3 max-h-96 overflow-y-auto">
             {history.map((item, idx) => (
-              <div key={idx} className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+              <div key={idx} className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition">
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
-                    <p className="font-medium text-gray-800">{item.text}</p>
+                    <p className="font-medium text-gray-800 dark:text-gray-100">{item.text}</p>
                     <div className="flex items-center gap-3 mt-2">
                       <Badge variant="primary">{item.result.category}</Badge>
-                      <span className="text-xs text-gray-600">
+                      <span className="text-xs text-gray-600 dark:text-gray-400">
                         {(item.result.confidence * 100).toFixed(0)}% confidence
                       </span>
                     </div>
@@ -206,7 +206,7 @@ export const Classify: React.FC = () => {
 
       {/* Popular Categories */}
       <Card>
-        <h3 className="text-lg font-bold mb-4 text-gray-800">Common Categories</h3>
+        <h3 className="text-lg font-bold mb-4 text-gray-800 dark:text-gray-100">Common Categories</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
             'Salary',
@@ -221,7 +221,7 @@ export const Classify: React.FC = () => {
             <button
               key={cat}
               onClick={() => setInput(cat)}
-              className="p-3 bg-gray-100 hover:bg-blue-100 rounded-lg transition font-medium text-gray-700"
+              className="p-3 bg-gray-100 dark:bg-gray-800 hover:bg-blue-100 dark:hover:bg-blue-900/40 rounded-lg transition font-medium text-gray-700 dark:text-gray-300"
             >
               {cat}
             </button>

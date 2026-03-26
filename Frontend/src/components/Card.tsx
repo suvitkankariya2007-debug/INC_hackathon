@@ -39,7 +39,6 @@ interface StatCardProps {
   trend?: number
   subtitle?: string
   loading?: boolean
-  sparkline?: number[]
 }
 
 const colorConfig = {
@@ -52,7 +51,7 @@ const colorConfig = {
 }
 
 export const StatCard: React.FC<StatCardProps> = ({ 
-  title, value, rawValue, icon, color = 'blue', trend, subtitle, loading, sparkline 
+  title, value, rawValue, icon, color = 'blue', trend, subtitle, loading 
 }) => {
   const c = colorConfig[color]
   const animatedValue = useCountUp(rawValue || 0)
@@ -160,6 +159,7 @@ interface BadgeProps {
   children: React.ReactNode
   variant?: 'primary' | 'success' | 'warning' | 'danger' | 'secondary' | 'info'
   size?: 'sm' | 'md'
+  className?: string
 }
 
 const badgeConfig = {
@@ -171,10 +171,10 @@ const badgeConfig = {
   info:      'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300',
 }
 
-export const Badge: React.FC<BadgeProps> = ({ children, variant = 'primary', size = 'sm' }) => (
+export const Badge: React.FC<BadgeProps> = ({ children, variant = 'primary', size = 'sm', className = '' }) => (
   <span className={`inline-flex items-center font-semibold rounded-lg ${
     size === 'sm' ? 'px-2.5 py-0.5 text-xs' : 'px-3 py-1 text-sm'
-  } ${badgeConfig[variant]}`}>
+  } ${badgeConfig[variant]} ${className}`}>
     {children}
   </span>
 )

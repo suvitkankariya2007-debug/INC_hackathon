@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Card, Input } from '../components'
 import { useApp } from '../context/AppContext'
 import { apiClient } from '../services/apiClient'
-
+ 
 export const ProfitLoss: React.FC = () => {
     const { state, setError, setLoading } = useApp()
     const [data, setData] = useState<any>(null)
@@ -10,11 +10,11 @@ export const ProfitLoss: React.FC = () => {
         start: '2024-09-01',
         end: '2025-02-28'
     })
-
+ 
     useEffect(() => {
         loadData()
     }, [state.selectedEntityId, dates])
-
+ 
     const loadData = async () => {
         try {
             setLoading(true)
@@ -26,12 +26,12 @@ export const ProfitLoss: React.FC = () => {
             setLoading(false)
         }
     }
-
+ 
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">Profit & Loss</h1>
+                    <h1 className="text-3xl font-bold text-gray-800 dark:text-white">Profit & Loss</h1>
                     <p className="text-gray-500 dark:text-gray-400 mt-1">Income and Expenses performance</p>
                 </div>
                 <div className="flex items-end gap-4">
@@ -49,48 +49,71 @@ export const ProfitLoss: React.FC = () => {
                     />
                 </div>
             </div>
-
+ 
             {data && (
                 <div className="space-y-6">
-                    <Card className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white border-none shadow-xl">
+                    {/*
+                      * Plain div instead of Card — Card applies background: var(--surface)
+                      * as an inline style which always wins over Tailwind bg-gradient classes.
+                      */}
+                    <div
+                        className="rounded-2xl p-6 shadow-xl"
+                        style={{ background: 'linear-gradient(to right, #2563eb, #4338ca)' }}
+                    >
                         <div className="flex justify-between items-center">
                             <div>
-                                <p className="text-blue-100 text-sm font-bold uppercase tracking-wider">Net Profit</p>
-                                <h2 className="text-4xl font-black mt-1">₹{data.net_profit.toLocaleString()}</h2>
+                                <p className="text-white text-sm font-bold uppercase tracking-wider opacity-80">
+                                    Net Profit
+                                </p>
+                                <h2 className="text-4xl font-black mt-1 text-white">
+                                    ₹{data.net_profit.toLocaleString()}
+                                </h2>
                             </div>
                             <div className="text-right">
-                                <p className="text-blue-100 text-sm">Profit Margin</p>
-                                <p className="text-2xl font-bold">{data.income > 0 ? ((data.net_profit / data.income) * 100).toFixed(1) : 0}%</p>
+                                <p className="text-white text-sm opacity-80">Profit Margin</p>
+                                <p className="text-2xl font-bold text-white">
+                                    {data.income > 0 ? ((data.net_profit / data.income) * 100).toFixed(1) : 0}%
+                                </p>
                             </div>
                         </div>
-                    </Card>
-
+                    </div>
+ 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <Card>
-                            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">Income</h3>
+                            <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">
+                                Income
+                            </h3>
                             <div className="flex justify-between items-center pb-4 border-b border-gray-200 dark:border-gray-700">
                                 <span className="font-bold text-gray-700 dark:text-gray-200">Total Revenue</span>
-                                <span className="text-xl font-bold text-green-600">₹{data.income.toLocaleString()}</span>
+                                <span className="text-xl font-bold text-green-600 dark:text-green-400">
+                                    ₹{data.income.toLocaleString()}
+                                </span>
                             </div>
                             <div className="mt-4 space-y-3">
                                 <div className="flex justify-between text-sm">
-                                    <span>Operating Revenue</span>
-                                    <span>₹{data.income.toLocaleString()}</span>
+                                    <span className="text-gray-600 dark:text-gray-300">Operating Revenue</span>
+                                    <span className="text-gray-800 dark:text-gray-200">₹{data.income.toLocaleString()}</span>
                                 </div>
                             </div>
                         </Card>
-
+ 
                         <Card>
-                            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">Expenses</h3>
+                            <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">
+                                Expenses
+                            </h3>
                             <div className="flex justify-between items-center pb-4 border-b border-gray-200 dark:border-gray-700">
                                 <span className="font-bold text-gray-700 dark:text-gray-200">Total Operating Expenses</span>
-                                <span className="text-xl font-bold text-red-600">₹{data.expenses.toLocaleString()}</span>
+                                <span className="text-xl font-bold text-red-600 dark:text-red-400">
+                                    ₹{data.expenses.toLocaleString()}
+                                </span>
                             </div>
                             <div className="mt-4 space-y-3">
                                 {Object.entries(data.expenses_by_category).map(([cat, amt]: any) => (
                                     <div key={cat} className="flex justify-between text-sm">
-                                        <span className="text-gray-600 dark:text-gray-400">{cat}</span>
-                                        <span className="font-medium">₹{amt.toLocaleString()}</span>
+                                        <span className="text-gray-600 dark:text-gray-300">{cat}</span>
+                                        <span className="font-medium text-gray-800 dark:text-gray-200">
+                                            ₹{amt.toLocaleString()}
+                                        </span>
                                     </div>
                                 ))}
                             </div>
