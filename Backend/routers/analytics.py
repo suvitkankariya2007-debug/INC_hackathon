@@ -32,7 +32,7 @@ def monthly_trend(entity_id: int, db: Session = Depends(get_db)):
             FROM transactions
             WHERE entity_id = :entity_id
               AND account_type IN ('income', 'expense')
-              AND date >= strftime('%Y-%m-%d', 'now', '-12 months')
+              AND date >= strftime('%Y-%m-%d', 'now', '-24 months')
             GROUP BY strftime('%Y-%m', date), account_type
             ORDER BY month ASC
         """)

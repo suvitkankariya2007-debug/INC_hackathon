@@ -246,7 +246,7 @@ export const Dashboard: React.FC = () => {
               <Tooltip formatter={(value) => `₹${Number(value).toLocaleString()}`} />
               <Legend />
               <Line type="monotone" dataKey="revenue" stroke="#10B981" strokeWidth={2} />
-              <Line type="monotone" dataKey="expense" stroke="#EF4444" strokeWidth={2} />
+              <Line type="monotone" dataKey="expenses" stroke="#EF4444" strokeWidth={2} />
             </LineChart>
           </ResponsiveContainer>
         </Card>
