@@ -1,5 +1,6 @@
 import React from 'react'
 
+// ─── Input ───────────────────────────────────────────────────
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string
   error?: string
@@ -8,23 +9,35 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 
 export const Input: React.FC<InputProps> = ({ label, error, icon, className = '', ...props }) => (
   <div className="w-full">
-    {label && <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>}
+    {label && (
+      <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--text-muted)' }}>
+        {label}
+      </label>
+    )}
     <div className="relative">
-      {icon && <div className="absolute left-3 top-3 text-gray-400">{icon}</div>}
+      {icon && (
+        <div className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-muted)' }}>{icon}</div>
+      )}
       <input
         className={`
-          w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all
+          w-full px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200
           ${icon ? 'pl-10' : ''}
-          ${error ? 'border-red-500 focus:ring-red-500' : 'border-gray-300'}
+          ${error ? 'border-red-400 dark:border-red-600' : ''}
           ${className}
         `}
+        style={{
+          background: 'var(--bg-tertiary)',
+          border: `1.5px solid ${error ? '' : 'var(--border)'}`,
+          color: 'var(--text-primary)',
+        }}
         {...props}
       />
     </div>
-    {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+    {error && <p className="text-red-500 dark:text-red-400 text-xs mt-1.5 font-medium">{error}</p>}
   </div>
 )
 
+// ─── Select ──────────────────────────────────────────────────
 interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   label?: string
   error?: string
@@ -41,13 +54,22 @@ export const Select: React.FC<SelectProps> = ({
   ...props
 }) => (
   <div className="w-full">
-    {label && <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>}
+    {label && (
+      <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--text-muted)' }}>
+        {label}
+      </label>
+    )}
     <select
       className={`
-        w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all
-        ${error ? 'border-red-500 focus:ring-red-500' : 'border-gray-300'}
+        w-full px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer
+        ${error ? 'border-red-400 dark:border-red-600' : ''}
         ${className}
       `}
+      style={{
+        background: 'var(--bg-tertiary)',
+        border: `1.5px solid var(--border)`,
+        color: 'var(--text-primary)',
+      }}
       {...props}
     >
       {placeholder && <option value="">{placeholder}</option>}
@@ -57,60 +79,7 @@ export const Select: React.FC<SelectProps> = ({
         </option>
       ))}
     </select>
-    {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+    {error && <p className="text-red-500 dark:text-red-400 text-xs mt-1.5 font-medium">{error}</p>}
   </div>
 )
 
-type BadgeVariant = 'primary' | 'success' | 'warning' | 'danger' | 'info'
-
-interface BadgeProps {
-  children: React.ReactNode
-  variant?: BadgeVariant
-  className?: string
-}
-
-const badgeVariants = {
-  primary: 'bg-blue-100 text-blue-800',
-  success: 'bg-green-100 text-green-800',
-  warning: 'bg-yellow-100 text-yellow-800',
-  danger: 'bg-red-100 text-red-800',
-  info: 'bg-gray-100 text-gray-800',
-}
-
-export const Badge: React.FC<BadgeProps> = ({ children, variant = 'primary', className = '' }) => (
-  <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${badgeVariants[variant]} ${className}`}>
-    {children}
-  </span>
-)
-
-type AlertVariant = 'success' | 'warning' | 'danger' | 'info'
-
-interface AlertProps {
-  children: React.ReactNode
-  variant?: AlertVariant
-  icon?: React.ReactNode
-  onClose?: () => void
-  className?: string
-}
-
-const alertVariants = {
-  success: 'bg-green-50 border-green-200 text-green-800',
-  warning: 'bg-yellow-50 border-yellow-200 text-yellow-800',
-  danger: 'bg-red-50 border-red-200 text-red-800',
-  info: 'bg-blue-50 border-blue-200 text-blue-800',
-}
-
-export const Alert: React.FC<AlertProps> = ({ children, variant = 'info', icon, onClose, className = '' }) => (
-  <div className={`border rounded-lg p-4 flex items-start gap-3 animate-slideInUp ${alertVariants[variant]} ${className}`}>
-    {icon && <div className="text-xl mt-0.5">{icon}</div>}
-    <div className="flex-1">{children}</div>
-    {onClose && (
-      <button
-        onClick={onClose}
-        className="text-xl cursor-pointer hover:opacity-70 transition-opacity ml-2"
-      >
-        ✕
-      </button>
-    )}
-  </div>
-)

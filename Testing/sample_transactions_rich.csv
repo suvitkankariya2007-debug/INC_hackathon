@@ -1,0 +1,52 @@
+entity_id,date,description,amount,transaction_type,account_type,cash_flow_section,reconcile_status
+1,2026-03-01,Client Payment - Acme Corp,112190.96,credit,income,operating,matched
+1,2026-01-04,Client Payment - Acme Corp,119515.14,credit,income,operating,matched
+1,2026-03-11,Client Payment - Acme Corp,114484.4,credit,income,operating,unmatched
+1,2026-01-06,Client Payment - Acme Corp,116280.79,credit,income,operating,unmatched
+1,2026-01-25,AWS Hosting Services,1398.09,debit,expense,operating,unmatched
+1,2026-01-28,Travel Expense - Flight,16371.35,debit,expense,operating,matched
+1,2026-01-14,Marketing & Ads - Google,5152.53,debit,expense,operating,possible
+1,2026-02-24,Travel Expense - Flight,22286.67,debit,expense,operating,matched
+1,2026-03-17,Office Rent,50000.0,debit,expense,operating,matched
+1,2026-03-02,Travel Expense - Flight,20116.18,debit,expense,operating,matched
+1,2026-01-16,Travel Expense - Flight,24281.23,debit,expense,operating,matched
+1,2026-03-01,Office Rent (Special),250000.0,debit,expense,operating,matched
+1,2026-01-04,AWS Hosting Services,1129.46,debit,expense,operating,unmatched
+1,2026-03-16,Office Rent,50000.0,debit,expense,operating,matched
+1,2026-02-17,Travel Expense - Flight,22184.81,debit,expense,operating,matched
+1,2026-03-10,AWS Hosting Services,1333.56,debit,expense,operating,matched
+1,2026-02-12,Client Payment - Acme Corp,103176.95,credit,income,operating,matched
+1,2025-12-24,AWS Hosting Services (Special),5312.200000000001,debit,expense,operating,unmatched
+1,2025-12-23,AWS Hosting Services,1058.49,debit,expense,operating,unmatched
+1,2026-01-19,Travel Expense - Flight,24063.51,debit,expense,operating,matched
+1,2026-01-12,Marketing & Ads - Google,5127.75,debit,expense,operating,matched
+1,2026-01-06,Marketing & Ads - Google,6817.28,debit,expense,operating,matched
+1,2026-03-12,Office Rent,50000.0,debit,expense,operating,matched
+1,2026-01-01,Office Supplies,839.03,debit,expense,operating,possible
+1,2026-03-09,AWS Hosting Services,1385.86,debit,expense,operating,matched
+1,2026-02-27,Marketing & Ads - Google,5137.23,debit,expense,operating,matched
+1,2026-01-28,Client Payment - Acme Corp,109634.42,credit,income,operating,matched
+1,2026-01-15,AWS Hosting Services,1412.04,debit,expense,operating,matched
+1,2026-01-04,Client Payment - Acme Corp,83699.99,credit,income,operating,matched
+1,2026-03-09,Marketing & Ads - Google,7516.52,debit,expense,operating,possible
+1,2026-02-02,Marketing & Ads - Google,7460.67,debit,expense,operating,possible
+1,2026-02-06,Marketing & Ads - Google,5269.21,debit,expense,operating,matched
+1,2026-01-29,Office Rent,50000.0,debit,expense,operating,matched
+1,2026-01-03,Travel Expense - Flight,20863.55,debit,expense,operating,matched
+1,2026-01-23,Client Payment - Acme Corp,109192.66,credit,income,operating,matched
+1,2026-03-15,Office Supplies,1764.03,debit,expense,operating,unmatched
+1,2026-01-02,Office Rent,50000.0,debit,expense,operating,matched
+1,2026-02-11,AWS Hosting Services,1037.1,debit,expense,operating,matched
+1,2026-03-09,Travel Expense - Flight,22149.45,debit,expense,operating,matched
+1,2026-01-19,Client Payment - Acme Corp,92900.66,credit,income,operating,unmatched
+1,2026-02-17,Marketing & Ads - Google,7784.18,debit,expense,operating,possible
+1,2026-01-21,Employee Salary,41791.48,debit,expense,operating,possible
+1,2026-01-03,Employee Salary,43632.76,debit,expense,operating,matched
+1,2026-01-11,Employee Salary,40701.11,debit,expense,operating,matched
+1,2026-02-17,Office Supplies,1639.22,debit,expense,operating,possible
+1,2026-01-24,Client Payment - Acme Corp,114999.02,credit,income,operating,unmatched
+1,2025-12-24,Client Payment - Acme Corp,115907.41,credit,income,operating,matched
+1,2026-02-22,Client Payment - Acme Corp,102339.13,credit,income,operating,matched
+1,2026-03-13,Office Rent,50000.0,debit,expense,operating,matched
+1,2026-01-16,Office Supplies,556.91,debit,expense,operating,unmatched
+1,2026-01-16,Office Supplies,556.91,debit,expense,operating,unmatched

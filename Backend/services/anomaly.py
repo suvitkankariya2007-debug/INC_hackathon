@@ -4,8 +4,55 @@ import numpy as np
 from datetime import datetime
 from collections import defaultdict
 
+from services.utils import parse_date_flexible
+from datetime import datetime, timedelta
+
+def run_single_transaction_anomaly_check(tx: Transaction, db: Session):
+    """A lightweight version of anomaly detection for a single transaction."""
+    try:
+        # Rule 1: Category Mean (Requires context of others)
+        # We'll skip complex category mean in real-time for now to keep it fast, 
+        # or just fetch recent stats.
+        
+        # Rule 2: Duplicate check (Very important for real-time)
+        tx_date = parse_date_flexible(tx.date)
+        duplicates = db.query(Transaction).filter(
+            Transaction.entity_id == tx.entity_id,
+            Transaction.amount == tx.amount,
+            Transaction.id != tx.id
+        ).all()
+        
+        for other in duplicates:
+            try:
+                other_date = parse_date_flexible(other.date)
+                if abs((tx_date - other_date).days) <= 1:
+                    tx.is_anomaly = 1
+                    tx.anomaly_reason = "Duplicate transaction detected (Real-time)"
+                    db.commit()
+                    return True
+            except ValueError:
+                continue
+
+        # Rule 3: Business Logic (Income as Debit)
+        if tx.account_type == "income" and tx.transaction_type == "debit":
+            tx.is_anomaly = 1
+            tx.anomaly_reason = "Negative revenue entry"
+            db.commit()
+            return True
+            
+        return False
+    except Exception:
+        return False
+
 def run_anomaly_detection(entity_id: int, db: Session):
-    transactions = db.query(Transaction).filter(Transaction.entity_id == entity_id).all()
+    # Performance Optimization: Only check transactions from the last 90 days
+    ninety_days_ago = (datetime.now() - timedelta(days=90)).strftime("%Y-%m-%d")
+    
+    transactions = db.query(Transaction).filter(
+        Transaction.entity_id == entity_id,
+        Transaction.date >= ninety_days_ago
+    ).all()
+    
     if not transactions:
         return []
 

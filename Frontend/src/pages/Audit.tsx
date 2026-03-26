@@ -35,6 +35,10 @@ export const Audit: React.FC = () => {
       setChainStatus(status)
       setError(null)
 
+      // Calculate and set compliance score immediately (before animation)
+      const score = status.valid ? 100 : Math.max(0, Math.round(((status.broken_at || 0) / status.total_blocks) * 100))
+      setComplianceScore(score)
+
       // Animate through blocks
       if (status.total_blocks > 0) {
         const blockCount = status.total_blocks
@@ -55,10 +59,6 @@ export const Audit: React.FC = () => {
         duration: `${(Math.random() * 0.5 + 0.1).toFixed(2)}s`,
       }
       setVerificationLogs((prev) => [newLog, ...prev].slice(0, 10))
-
-      // Calculate compliance score
-      const score = status.valid ? 100 : Math.max(0, Math.round(((status.broken_at || 0) / status.total_blocks) * 100))
-      setComplianceScore(score)
 
       setAnimatingVerify(false)
     } catch (err: any) {
@@ -160,18 +160,18 @@ export const Audit: React.FC = () => {
         {/* Compliance Score */}
         <Card>
           <div className="text-center">
-            <p className={`text-4xl font-bold ${getScoreColor(complianceScore)}`}>
-              {complianceScore}%
+            <p className={`text-4xl font-bold ${checking ? 'text-gray-400' : getScoreColor(complianceScore)}`}>
+              {checking ? '—' : `${complianceScore}%`}
             </p>
             <p className="text-sm text-gray-600 mt-2">Compliance Score</p>
             <div className="mt-3 bg-gray-200 rounded-full h-3 overflow-hidden">
               <div
-                className={`h-3 rounded-full transition-all duration-1000 ${getScoreBg(complianceScore)}`}
-                style={{ width: `${complianceScore}%` }}
+                className={`h-3 rounded-full transition-all duration-1000 ${checking ? 'bg-gray-300' : getScoreBg(complianceScore)}`}
+                style={{ width: checking ? '0%' : `${complianceScore}%` }}
               />
             </div>
             <p className="text-xs text-gray-500 mt-2">
-              {complianceScore === 100 ? '✓ Fully compliant' : `⚠ ${100 - complianceScore}% blocks need attention`}
+              {checking ? 'Verifying...' : complianceScore === 100 ? '✓ Fully compliant' : `⚠ ${100 - complianceScore}% blocks need attention`}
             </p>
           </div>
         </Card>

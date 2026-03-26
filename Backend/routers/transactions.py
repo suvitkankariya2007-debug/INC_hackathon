@@ -9,6 +9,8 @@ from models.transaction import Transaction
 from models.classify_feedback import ClassifyFeedback
 from services.classifier import classify
 from services.hash_chain import create_block
+from services.utils import normalize_date_to_iso
+from services.anomaly import run_single_transaction_anomaly_check
 
 router = APIRouter(prefix="/transactions", tags=["Transactions"])
 
@@ -53,7 +55,7 @@ def create_transaction(tx: TransactionCreate, db: Session = Depends(get_db)):
 
         db_tx = Transaction(
             entity_id=tx.entity_id,
-            date=tx.date,
+            date=normalize_date_to_iso(tx.date),
             description=tx.description,
             amount=tx.amount,
             transaction_type=tx.transaction_type,
@@ -79,6 +81,9 @@ def create_transaction(tx: TransactionCreate, db: Session = Depends(get_db)):
             db.commit()
 
         create_block(db_tx.id, db)
+        
+        # Real-time Anomaly Detection Trigger
+        run_single_transaction_anomaly_check(db_tx, db)
 
         return TransactionResponse.model_validate(db_tx)
             
@@ -191,7 +196,7 @@ def upload_csv(file: UploadFile = File(...), db: Session = Depends(get_db)):
 
                 tx = Transaction(
                     entity_id=int(row_data["entity_id"]),
-                    date=row_data["date"],
+                    date=normalize_date_to_iso(row_data["date"]),
                     description=desc,
                     amount=float(row_data["amount"]),
                     transaction_type=row_data["transaction_type"],
@@ -207,6 +212,10 @@ def upload_csv(file: UploadFile = File(...), db: Session = Depends(get_db)):
                 db.commit()
                 db.refresh(tx)
                 create_block(tx.id, db)
+                
+                # Real-time Anomaly Detection Trigger
+                run_single_transaction_anomaly_check(tx, db)
+                
                 inserted += 1
             except Exception as row_e:
                 db.rollback()

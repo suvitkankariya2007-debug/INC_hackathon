@@ -74,6 +74,22 @@ export const Reconciliation: React.FC = () => {
                 </Card>
             )}
 
+            {!report && (
+                <div className="flex flex-col items-center justify-center py-24 text-gray-400">
+                    <p className="text-6xl mb-4">🏦</p>
+                    <h3 className="text-xl font-semibold text-gray-600 mb-2">No Bank Statement Uploaded</h3>
+                    <p className="text-sm text-center max-w-sm">
+                        Upload a bank statement CSV to start reconciling your transactions. The file should contain date, description, and amount columns.
+                    </p>
+                    <button
+                        onClick={() => setShowUpload(true)}
+                        className="mt-6 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors"
+                    >
+                        Upload Bank Statement
+                    </button>
+                </div>
+            )}
+
             {report && (
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Column 1: Matched */}

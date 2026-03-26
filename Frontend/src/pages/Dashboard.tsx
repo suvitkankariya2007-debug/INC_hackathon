@@ -5,6 +5,32 @@ import { useApp } from '../context/AppContext'
 import { apiClient } from '../services/apiClient'
 import { AnomalyAlert, Transaction } from '../types'
 
+
+// ─── Custom Glass Tooltip ─────────────────────────────────────
+const GlassTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="liquid-glass rounded-xl p-3 text-xs shadow-2xl animate-fadeIn min-w-[140px]">
+        <p className="font-bold mb-2 opacity-70 uppercase tracking-tight" style={{ color: 'var(--text-primary)' }}>{label}</p>
+        <div className="space-y-1.5">
+          {payload.map((entry: any, index: number) => (
+            <div key={index} className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color || entry.fill }} />
+                <span style={{ color: 'var(--text-secondary)' }}>{entry.name}</span>
+              </div>
+              <span className="font-mono font-bold" style={{ color: 'var(--text-primary)' }}>
+                ₹{Number(entry.value).toLocaleString('en-IN')}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+  return null
+}
+
 export const Dashboard: React.FC = () => {
   const { state, setMonthlyTrends, setAnomalies, setLoading, setError } = useApp()
   const [transactions, setTransactions] = useState<Transaction[]>([])
@@ -159,11 +185,43 @@ export const Dashboard: React.FC = () => {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard title="Total Transactions" value={stats.total} icon="💳" color="blue" />
-        <StatCard title="Anomalies Detected" value={stats.anomalies} icon="⚠️" color="red" trend={-15} />
-        <StatCard title="Total Revenue" value={`₹${(stats.revenue / 100000).toFixed(1)}L`} icon="📈" color="green" trend={12} />
-        <StatCard title="Total Expense" value={`₹${(stats.expense / 100000).toFixed(1)}L`} icon="📉" color="yellow" trend={8} />
+        <StatCard 
+          title="Total Transactions" 
+          rawValue={stats.total} 
+          value={stats.total} 
+          icon="💳" 
+          color="blue" 
+          loading={state.loading}
+        />
+        <StatCard 
+          title="Anomalies Detected" 
+          rawValue={stats.anomalies} 
+          value={stats.anomalies} 
+          icon="⚠️" 
+          color="red" 
+          trend={-15} 
+          loading={state.loading}
+        />
+        <StatCard 
+          title="Total Revenue" 
+          rawValue={stats.revenue} 
+          value={`₹${(stats.revenue / 100000).toFixed(1)}L`} 
+          icon="📈" 
+          color="green" 
+          trend={12} 
+          loading={state.loading}
+        />
+        <StatCard 
+          title="Total Expense" 
+          rawValue={stats.expense} 
+          value={`₹${(stats.expense / 100000).toFixed(1)}L`} 
+          icon="📉" 
+          color="yellow" 
+          trend={8} 
+          loading={state.loading}
+        />
       </div>
+
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
@@ -241,12 +299,12 @@ export const Dashboard: React.FC = () => {
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={state.monthlyTrends}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip formatter={(value) => `₹${Number(value).toLocaleString()}`} />
-              <Legend />
+              <XAxis dataKey="month" stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} dy={10} />
+              <YAxis stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} dx={-10} />
+              <Tooltip content={<GlassTooltip />} cursor={{ stroke: 'var(--accent)', strokeWidth: 2, opacity: 0.1 }} />
+              <Legend verticalAlign="top" height={36} />
               <Line type="monotone" dataKey="revenue" stroke="#10B981" strokeWidth={2} />
-              <Line type="monotone" dataKey="expense" stroke="#EF4444" strokeWidth={2} />
+              <Line type="monotone" dataKey="expenses" stroke="#EF4444" strokeWidth={2} />
             </LineChart>
           </ResponsiveContainer>
         </Card>
@@ -271,12 +329,12 @@ export const Dashboard: React.FC = () => {
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip formatter={(value) => `₹${Number(value).toLocaleString()}`} />
+                <Tooltip content={<GlassTooltip />} />
                 <Legend 
                   layout="horizontal" 
                   verticalAlign="bottom" 
                   align="center"
-                  wrapperStyle={{ paddingTop: '20px' }}
+                  wrapperStyle={{ paddingTop: '30px' }}
                 />
               </PieChart>
             </ResponsiveContainer>

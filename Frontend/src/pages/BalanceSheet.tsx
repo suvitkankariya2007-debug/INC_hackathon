@@ -98,6 +98,11 @@ export const BalanceSheet: React.FC = () => {
                                 <span className="font-bold">{data.is_balanced ? "✓ System Balanced" : "⚠️ Out of Balance"}</span>
                                 <span className="text-xs font-mono">Diff: ₹{Math.abs(data.assets - data.total_l_e).toFixed(2)}</span>
                             </div>
+                            {!data.is_balanced && (
+                                <p className="text-xs text-red-600 mt-2">
+                                    This may be caused by transactions with unclassified or missing account types. Ensure all transactions have a valid account type (asset, liability, equity, income, or expense).
+                                </p>
+                            )}
                         </Card>
                     </div>
                 </div>

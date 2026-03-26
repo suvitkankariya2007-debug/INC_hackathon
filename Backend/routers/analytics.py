@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 from sqlalchemy import text
 from database import get_db
 from services.anomaly import run_anomaly_detection
+from models.transaction import Transaction
+from datetime import datetime, timedelta
 
 router = APIRouter(prefix="/analytics", tags=["Analytics"])
 
@@ -24,33 +26,38 @@ def get_anomalies(entity_id: int, db: Session = Depends(get_db)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+from sqlalchemy import extract, func
+
 @router.get("/monthly-trend")
 def monthly_trend(entity_id: int, db: Session = Depends(get_db)):
     try:
-        query = text("""
-            SELECT strftime('%Y-%m', date) as month, account_type, SUM(amount) as total
-            FROM transactions
-            WHERE entity_id = :entity_id
-              AND account_type IN ('income', 'expense')
-              AND date >= strftime('%Y-%m-%d', 'now', '-12 months')
-            GROUP BY strftime('%Y-%m', date), account_type
-            ORDER BY month ASC
-        """)
-        results = db.execute(query, {"entity_id": entity_id}).fetchall()
+        # Use SQLAlchemy expressions for database portability
+        # We group by Year and Month
+        year_field = extract('year', Transaction.date)
+        month_field = extract('month', Transaction.date)
+        
+        results = db.query(
+            func.max(func.strftime('%Y-%m', Transaction.date)).label('month_str'),
+            Transaction.account_type,
+            func.sum(Transaction.amount).label('total')
+        ).filter(
+            Transaction.entity_id == entity_id,
+            Transaction.account_type.in_(['income', 'expense']),
+            Transaction.date >= (datetime.now() - timedelta(days=730)).strftime("%Y-%m-%d") # 24 months
+        ).group_by(
+            func.strftime('%Y-%m', Transaction.date),
+            Transaction.account_type
+        ).order_by('month_str').all()
         
         trends = {}
-        for r in results:
-            month = r[0]
-            acc_type = r[1]
-            total = r[2]
-            
-            if month not in trends:
-                trends[month] = {"month": month, "revenue": 0.0, "expenses": 0.0}
+        for month_str, acc_type, total in results:
+            if month_str not in trends:
+                trends[month_str] = {"month": month_str, "revenue": 0.0, "expenses": 0.0}
                 
             if acc_type == "income":
-                trends[month]["revenue"] += total
+                trends[month_str]["revenue"] += float(total)
             else:
-                trends[month]["expenses"] += total
+                trends[month_str]["expenses"] += float(total)
 
         return list(trends.values())
     except Exception as e:

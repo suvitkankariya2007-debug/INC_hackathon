@@ -1,0 +1,6 @@
+date,description,amount,transaction_type,account_type,entity_id,cash_flow_section
+25/03/2024,Mixed Date Format Test,1250.00,debit,expense,1,operating
+2024-03-26,Standard ISO Test,2100.50,credit,income,1,operating
+27-03-2024,Hyphen Date Test,500.00,debit,expense,1,operating
+28/03/24,Short Year Test,300.25,debit,expense,1,operating
+25/03/2024,Duplicate Detection Test,1250.00,debit,expense,1,operating
