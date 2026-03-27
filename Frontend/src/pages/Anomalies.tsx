@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { Card, Table, Amount, Badge, Alert, Button } from '../components'
 import { useApp } from '../context/AppContext'
 import { apiClient } from '../services/apiClient'
+import RiskMeter from '../components/RiskMeter'
 
 
 export const Anomalies: React.FC = () => {
@@ -74,9 +75,15 @@ export const Anomalies: React.FC = () => {
     {
       key: 'anomaly_reason' as const,
       label: 'Reason',
-      render: (value: string) => (
+      render: (value: string, record: any) => (
         <div className="w-64">
           <p className="text-sm font-medium text-gray-700 dark:text-gray-200">{value}</p>
+          {record.severity && (
+            <RiskMeter
+              score={record.severity.score}
+              label={record.severity.label}
+            />
+          )}
           <Badge variant={getSeverityColor(getSeverity(value))} className="mt-2">
             {getSeverity(value).toUpperCase()}
           </Badge>

@@ -4,6 +4,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart
 import { useApp } from '../context/AppContext'
 import { apiClient } from '../services/apiClient'
 import { AnomalyAlert, Transaction } from '../types'
+import AnomalyCard from '../components/AnomalyCard'
 
 
 // ─── Custom Glass Tooltip ─────────────────────────────────────
@@ -29,6 +30,90 @@ const GlassTooltip = ({ active, payload, label }: any) => {
     )
   }
   return null
+}
+
+function ExpenseLeaderboard({ entityId }: { entityId: number }) {
+  const [data, setData] = React.useState<any[]>([]);
+
+  React.useEffect(() => {
+    fetch(`/api/analytics/expense-breakdown?entity_id=${entityId}`)
+      .then(r => r.json())
+      .then(rows => {
+        const top5 = [...rows]
+          .sort((a, b) => b.amount - a.amount)
+          .slice(0, 5);
+        setData(top5);
+      })
+      .catch(() => setData([]));
+  }, [entityId]);
+
+  if (!data.length) return null;
+
+  const max = data[0]?.amount || 1;
+
+  return (
+    <div className="lg:col-span-4 col-span-1">
+      <Card className="liquid-glass border-none shadow-xl transition-all duration-300 hover:shadow-2xl overflow-hidden group">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h3 className="text-xl font-black tracking-tight text-gray-800 dark:text-gray-100 flex items-center gap-2">
+               📊 Top 5 expense categories
+            </h3>
+            <p className="text-xs text-gray-500 uppercase font-bold tracking-widest mt-1 opacity-60">High-volume category analysis</p>
+          </div>
+          <div className="h-8 w-8 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500 animate-pulse">
+            ↑
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
+          {data.map((item, i) => {
+            const barColors = [
+              "from-red-500 to-rose-600",
+              "from-orange-500 to-amber-600",
+              "from-amber-400 to-yellow-500",
+              "from-blue-500 to-indigo-600",
+              "from-slate-400 to-slate-500"
+            ];
+            const shadowColors = [
+              "shadow-red-500/30",
+              "shadow-orange-500/30",
+              "shadow-amber-500/30",
+              "shadow-blue-500/30",
+              "shadow-slate-500/20"
+            ];
+            
+            return (
+              <div key={item.category} className="space-y-3 relative group/item">
+                <div className="flex flex-col gap-1">
+                  <span className="text-sm font-black text-gray-800 dark:text-gray-100 truncate group-hover/item:text-blue-500 transition-colors">
+                    {item.category}
+                  </span>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-lg font-bold text-gray-900 dark:text-white">
+                      ₹{item.amount.toLocaleString("en-IN", { maximumFractionDigits: 0 })}
+                    </span>
+                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-tighter">
+                      {item.percentage.toFixed(1)}%
+                    </span>
+                  </div>
+                </div>
+
+                <div className="h-2.5 w-full bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden p-[1px]">
+                  <div 
+                    className={`h-full rounded-full bg-gradient-to-r ${barColors[i] || "bg-gray-400"} shadow-lg ${shadowColors[i] || ""} transition-all duration-1000 ease-out`}
+                    style={{ width: `${(item.amount / max) * 100}%` }}
+                  />
+                </div>
+                
+                <div className="absolute -inset-2 rounded-xl bg-blue-500/0 group-hover/item:bg-blue-500/[0.03] transition-all -z-10" />
+              </div>
+            );
+          })}
+        </div>
+      </Card>
+    </div>
+  );
 }
 
 export const Dashboard: React.FC = () => {
@@ -220,6 +305,7 @@ export const Dashboard: React.FC = () => {
           trend={8} 
           loading={state.loading}
         />
+        <ExpenseLeaderboard entityId={state.selectedEntityId || 1} />
       </div>
 
 
@@ -357,27 +443,9 @@ export const Dashboard: React.FC = () => {
           </div>
         </div>
         <div className="space-y-3 max-h-96 overflow-y-auto">
-          {state.anomalies.slice(0, 5).map((anomaly) => {
-            const isStatistical = anomaly.anomaly_reason.includes('sigma')
-            const isDuplicate = anomaly.anomaly_reason.includes('Duplicate')
-            return (
-              <div key={anomaly.id} className={`p-4 rounded-lg border ${isStatistical ? 'bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-800' : isDuplicate ? 'bg-yellow-50 dark:bg-yellow-950/30 border-yellow-200 dark:border-yellow-800' : 'bg-indigo-50 dark:bg-indigo-950/30 border-indigo-200 dark:border-indigo-800'}`}>
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <Badge variant={isStatistical ? 'danger' : isDuplicate ? 'warning' : 'info'}>
-                      {isStatistical ? '📊 Statistical' : isDuplicate ? '📋 Duplicate' : '✓ Logical'}
-                    </Badge>
-                    <p className="font-semibold text-gray-800 dark:text-gray-100">{anomaly.description}</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{anomaly.anomaly_reason}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">{anomaly.date}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-bold text-red-600">₹{anomaly.amount.toLocaleString()}</p>
-                  </div>
-                </div>
-              </div>
-            )
-          })}
+          {state.anomalies.slice(0, 5).map((anomaly) => (
+            <AnomalyCard key={anomaly.id} anomaly={anomaly} />
+          ))}
         </div>
       </Card>
     </div>

@@ -17,10 +17,40 @@ def get_anomalies(entity_id: int, db: Session = Depends(get_db)):
                 "description": a.description,
                 "amount": a.amount,
                 "category": a.category,
-                "anomaly_reason": a.anomaly_reason
+                "anomaly_reason": a.anomaly_reason,
+                "severity": getattr(a, "severity", None)
             }
             for a in anomalies
         ]
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/expense-breakdown")
+def get_expense_breakdown(entity_id: int, db: Session = Depends(get_db)):
+    try:
+        # Get total expenses for the entity
+        query = text("""
+            SELECT category, SUM(amount) as amount
+            FROM transactions
+            WHERE entity_id = :entity_id AND account_type = 'expense'
+            GROUP BY category
+        """)
+        results = db.execute(query, {"entity_id": entity_id}).fetchall()
+        
+        total_expense = sum(r[1] for r in results)
+        
+        breakdown = []
+        for r in results:
+            category = r[0] or "Uncategorized"
+            amount = r[1]
+            percentage = (amount / total_expense * 100) if total_expense > 0 else 0
+            breakdown.append({
+                "category": category,
+                "amount": amount,
+                "percentage": percentage
+            })
+            
+        return breakdown
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

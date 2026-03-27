@@ -7,6 +7,28 @@ from collections import defaultdict
 from services.utils import parse_date_flexible
 from datetime import datetime, timedelta
 
+def compute_severity(reason: str, sigma: float = None) -> dict:
+    score = 0
+    if sigma is not None:
+        sigma_pts = min(int((sigma / 6.0) * 60), 60)
+        score += sigma_pts
+    reason_lower = reason.lower()
+    if "duplicate" in reason_lower:
+        score += 25
+    if "negative revenue" in reason_lower:
+        score += 15
+    score = min(score, 100)
+    if score >= 75:
+        label = "critical"
+    elif score >= 50:
+        label = "high"
+    elif score >= 25:
+        label = "medium"
+    else:
+        label = "low"
+    return {"score": score, "label": label}
+
+
 def run_single_transaction_anomaly_check(tx: Transaction, db: Session):
     """A lightweight version of anomaly detection for a single transaction."""
     try:
@@ -75,13 +97,14 @@ def run_anomaly_detection(entity_id: int, db: Session):
 
     for tx in transactions:
         reason = None
+        sigma = None
         
         # Rule 1
         if tx.category in cat_stats:
             mean, std = cat_stats[tx.category]
             if std > 0 and tx.amount > mean + 3 * std:
-                sigmas = (tx.amount - mean) / std
-                reason = f"{round(sigmas, 1)} sigma above category mean"
+                sigma = (tx.amount - mean) / std
+                reason = f"{round(sigma, 1)} sigma above category mean"
 
         # Rule 2
         if not reason:
@@ -106,6 +129,9 @@ def run_anomaly_detection(entity_id: int, db: Session):
         if reason:
             tx.is_anomaly = 1
             tx.anomaly_reason = reason
+            # Attach dynamic attribute for severity
+            tx.severity = compute_severity(reason, sigma)
+            # Use dictionary representation as requested for the final anomaly object
             anomalous_txs.append(tx)
 
     if anomalous_txs:
