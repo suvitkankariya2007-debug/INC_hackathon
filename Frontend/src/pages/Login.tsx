@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Card, Input, Button, Alert } from '../components'
 import { useApp } from '../context/AppContext'
 import { apiClient } from '../services/apiClient'
+import ledgeraiLogo from '../assets/ledgerai-logo.png'
 
 export const Login: React.FC = () => {
     const { state, setEntities, setSelectedEntity, setError, setSuccess } = useApp()
@@ -44,7 +45,7 @@ export const Login: React.FC = () => {
         <div className="flex flex-col items-center justify-center min-h-[80vh] p-4">
             <div className="w-full max-w-md space-y-8">
                 <div className="text-center">
-                    <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-2">LedgerAI</h1>
+                    <img src={ledgeraiLogo} alt="LedgerAI" className="h-16 w-auto mx-auto mb-2" />
                     <p className="text-gray-600 dark:text-gray-400">Smart Accounting & Audit Platform</p>
                 </div>
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useApp } from '../context/AppContext'
 import { PageTransition } from './PageTransition'
+import ledgeraiLogo from '../assets/ledgerai-logo.png'
 
 interface LayoutProps {
   children: React.ReactNode
@@ -51,14 +52,11 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         <div className={`flex items-center ${sidebarOpen ? 'justify-between' : 'justify-center'} px-4 py-5 border-b border-white/10`}>
           {sidebarOpen && (
             <div className="flex items-center gap-2.5 animate-fadeIn">
-              <div className="w-8 h-8 bg-white/20 rounded-xl flex items-center justify-center text-lg backdrop-blur-sm">
-                ⬡
-              </div>
-              <div>
-                <span className="text-white font-bold text-lg leading-none tracking-tight">LedgerAI</span>
-                <p className="text-white/40 text-[10px] uppercase tracking-widest mt-0.5">Financial Platform</p>
-              </div>
+              <img src={ledgeraiLogo} alt="LedgerAI" className="h-10 w-auto object-contain" />
             </div>
+          )}
+          {!sidebarOpen && (
+            <img src={ledgeraiLogo} alt="LedgerAI" className="h-8 w-8 object-cover rounded-lg" />
           )}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -67,8 +65,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               {sidebarOpen
-                ? <path d="M15 19l-7-7 7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-                : <path d="M9 19l7-7-7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                ? <path d="M15 19l-7-7 7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                : <path d="M9 19l7-7-7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
               }
             </svg>
           </button>
@@ -159,16 +157,16 @@ const Header: React.FC<HeaderProps> = ({ dark, setDark }) => {
   }, [])
 
   const titles: Record<string, { title: string; subtitle: string; icon: string }> = {
-    'dashboard':     { title: 'Dashboard',           subtitle: 'Real-time financial overview',       icon: '📊' },
-    'transactions':  { title: 'Transactions',         subtitle: 'Browse, filter and manage entries',  icon: '💳' },
-    'anomalies':     { title: 'Anomaly Detection',    subtitle: 'AI-powered outlier detection',       icon: '⚠️' },
-    'classify':      { title: 'AI Classification',    subtitle: 'ML-powered transaction categorizer', icon: '🏷️' },
-    'audit':         { title: 'Audit Trail',          subtitle: 'SHA-256 blockchain verification',    icon: '🔒' },
-    'balance-sheet': { title: 'Balance Sheet',        subtitle: 'Assets, liabilities & equity',       icon: '⚖️' },
-    'profit-loss':   { title: 'Profit & Loss',        subtitle: 'Income vs. expenses report',         icon: '📈' },
-    'cashflow':      { title: 'Cash Flow',            subtitle: 'Operating, investing & financing',   icon: '💰' },
-    'reconcile':     { title: 'Reconciliation',       subtitle: 'Bank statement matching',            icon: '🔄' },
-    'entities':      { title: 'Entities',             subtitle: 'Manage business entities',           icon: '🏢' },
+    'dashboard': { title: 'Dashboard', subtitle: 'Real-time financial overview', icon: '📊' },
+    'transactions': { title: 'Transactions', subtitle: 'Browse, filter and manage entries', icon: '💳' },
+    'anomalies': { title: 'Anomaly Detection', subtitle: 'AI-powered outlier detection', icon: '⚠️' },
+    'classify': { title: 'AI Classification', subtitle: 'ML-powered transaction categorizer', icon: '🏷️' },
+    'audit': { title: 'Audit Trail', subtitle: 'SHA-256 blockchain verification', icon: '🔒' },
+    'balance-sheet': { title: 'Balance Sheet', subtitle: 'Assets, liabilities & equity', icon: '⚖️' },
+    'profit-loss': { title: 'Profit & Loss', subtitle: 'Income vs. expenses report', icon: '📈' },
+    'cashflow': { title: 'Cash Flow', subtitle: 'Operating, investing & financing', icon: '💰' },
+    'reconcile': { title: 'Reconciliation', subtitle: 'Bank statement matching', icon: '🔄' },
+    'entities': { title: 'Entities', subtitle: 'Manage business entities', icon: '🏢' },
   }
 
   const page = titles[hash] || titles['dashboard']
@@ -237,7 +235,7 @@ const navGroups = [
   {
     label: 'Overview',
     items: [
-      { id: 'dashboard',    label: 'Dashboard',    href: '#dashboard',    icon: '📊' },
+      { id: 'dashboard', label: 'Dashboard', href: '#dashboard', icon: '📊' },
       { id: 'transactions', label: 'Transactions', href: '#transactions', icon: '💳' },
     ],
   },
@@ -245,23 +243,23 @@ const navGroups = [
     label: 'AI Tools',
     items: [
       { id: 'anomalies', label: 'Anomalies', href: '#anomalies', icon: '⚠️' },
-      { id: 'classify',  label: 'Classify',  href: '#classify',  icon: '🏷️' },
+      { id: 'classify', label: 'Classify', href: '#classify', icon: '🏷️' },
     ],
   },
   {
     label: 'Reports',
     items: [
       { id: 'balance-sheet', label: 'Balance Sheet', href: '#balance-sheet', icon: '⚖️' },
-      { id: 'profit-loss',   label: 'Profit & Loss', href: '#profit-loss',   icon: '📈' },
-      { id: 'cashflow',      label: 'Cash Flow',     href: '#cashflow',      icon: '💰' },
+      { id: 'profit-loss', label: 'Profit & Loss', href: '#profit-loss', icon: '📈' },
+      { id: 'cashflow', label: 'Cash Flow', href: '#cashflow', icon: '💰' },
     ],
   },
   {
     label: 'System',
     items: [
       { id: 'reconcile', label: 'Reconciliation', href: '#reconcile', icon: '🔄' },
-      { id: 'audit',     label: 'Audit',          href: '#audit',     icon: '🔒' },
-      { id: 'entities',  label: 'Entities',       href: '#entities',  icon: '🏢' },
+      { id: 'audit', label: 'Audit', href: '#audit', icon: '🔒' },
+      { id: 'entities', label: 'Entities', href: '#entities', icon: '🏢' },
     ],
   },
 ]
