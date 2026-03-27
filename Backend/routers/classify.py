@@ -47,8 +47,8 @@ def classify_text(req: ClassifyRequest):
 
 @router.post("/feedback")
 def submit_feedback(req: FeedbackRequest, db: Session = Depends(get_db)):
-    # 1. Skip database insert if from the Playground (no transaction_id)
-    if req.transaction_id is None:
+    # 1. Skip database insert if from the Playground (no transaction_id or id=0)
+    if req.transaction_id is None or req.transaction_id == 0:
         return {"message": "Playground feedback acknowledged (not saved to DB)"}
 
     # 2. Proceed with DB insert for real transactions

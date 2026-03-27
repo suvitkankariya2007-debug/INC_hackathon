@@ -107,8 +107,7 @@ class ApiClient {
     correctedCategory: string
   ): Promise<{ id: number }> {
     const response = await this.client.post('/classify/feedback', {
-      // If transactionId is null (Playground), send 0 to satisfy the backend
-      transaction_id: transactionId !== null ? transactionId : 0, 
+      transaction_id: transactionId, 
       original_category: originalCategory,
       corrected_category: correctedCategory,
     })
