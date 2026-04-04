@@ -1,0 +1,62 @@
+entity_id,date,description,amount,transaction_type,account_type,cash_flow_section
+999,2025-01-03,Office Rent January,85000,debit,expense,operating
+999,2025-01-05,Client Payment Sharma Retail Invoice 001,150000,credit,income,operating
+999,2025-01-07,Electricity Bill January,4200,debit,expense,operating
+999,2025-01-10,Staff Salaries January,320000,debit,expense,operating
+999,2025-01-12,GST Payment Q3,18500,credit,liability,operating
+999,2025-01-15,Consulting Fee Mehta Associates,45000,credit,income,operating
+999,2025-01-18,Internet and Phone Bills,3800,debit,expense,operating
+999,2025-01-20,Office Supplies Purchase,6700,debit,expense,operating
+999,2025-01-22,Client Payment Sharma Retail Invoice 002,200000,credit,income,operating
+999,2025-01-25,Tata Consultancy Services Invoice,55000,debit,expense,operating
+999,2025-01-28,Bank Loan EMI January,42000,credit,liability,financing
+999,2025-01-31,Miscellaneous Expenses January,2100,debit,expense,operating
+999,2025-02-01,Office Rent February,85000,debit,expense,operating
+999,2025-02-04,Client Payment Patel Industries,175000,credit,income,operating
+999,2025-02-06,Electricity Bill February,4500,debit,expense,operating
+999,2025-02-10,Staff Salaries February,320000,debit,expense,operating
+999,2025-02-12,AWS Cloud Invoice February,12000,debit,expense,operating
+999,2025-02-14,Advance Tax Payment,35000,credit,liability,operating
+999,2025-02-17,Consulting Fee Kapoor and Co,60000,credit,income,operating
+999,2025-02-19,Travel and Conveyance,8500,debit,expense,operating
+999,2025-02-21,Client Payment Sharma Retail Invoice 003,220000,credit,income,operating
+999,2025-02-24,Printer and Stationery,4200,debit,expense,operating
+999,2025-02-26,Bank Loan EMI February,42000,credit,liability,financing
+999,2025-02-28,Software Subscription Zoho,5400,debit,expense,operating
+999,2025-03-03,Office Rent March,85000,debit,expense,operating
+999,2025-03-05,Client Payment Gupta Enterprises,130000,credit,income,operating
+999,2025-03-07,Electricity Bill March,4800,debit,expense,operating
+999,2025-03-10,Staff Salaries March,320000,debit,expense,operating
+999,2025-03-13,GST Payment Q4,22000,credit,liability,operating
+999,2025-03-15,AWS Cloud Invoice March,12000,debit,expense,operating
+999,2025-03-17,Consulting Fee Sharma Advisory,80000,credit,income,operating
+999,2025-03-19,Office Maintenance,9500,debit,expense,operating
+999,2025-03-21,Client Payment Mehta Corp Invoice 007,195000,credit,income,operating
+999,2025-03-24,Legal and Professional Fees,15000,debit,expense,operating
+999,2025-03-26,Bank Loan EMI March,42000,credit,liability,financing
+999,2025-03-28,Internet and Phone Bills,3800,debit,expense,operating
+999,2025-03-31,Miscellaneous Expenses March,3200,debit,expense,operating
+999,2025-04-02,Office Rent April,85000,debit,expense,operating
+999,2025-04-05,Client Payment Patel Industries Invoice 004,210000,credit,income,operating
+999,2025-04-07,Electricity Bill April,5100,debit,expense,operating
+999,2025-04-10,Staff Salaries April,335000,debit,expense,operating
+999,2025-04-14,AWS Cloud Invoice April,12000,debit,expense,operating
+999,2025-04-16,Consulting Fee Kapoor and Co,75000,credit,income,operating
+999,2025-04-18,Travel and Conveyance,11000,debit,expense,operating
+999,2025-04-21,Client Payment Sharma Retail Invoice 005,250000,credit,income,operating
+999,2025-04-23,Office Supplies Purchase,5500,debit,expense,operating
+999,2025-04-25,Bank Loan EMI April,42000,credit,liability,financing
+999,2025-04-28,Software Subscription Tally,8000,debit,expense,operating
+999,2025-04-30,Advance Tax Payment,40000,credit,liability,operating
+999,2025-05-02,Office Rent May,85000,debit,expense,operating
+999,2025-05-06,Client Payment Gupta Enterprises Invoice 002,160000,credit,income,operating
+999,2025-05-08,Electricity Bill May,4600,debit,expense,operating
+999,2025-05-10,Staff Salaries May,335000,debit,expense,operating
+999,2025-05-13,AWS Cloud Invoice May,12000,debit,expense,operating
+999,2025-05-15,Consulting Fee Mehta Associates,55000,credit,income,operating
+999,2025-05-19,Office Maintenance,7200,debit,expense,operating
+999,2025-05-21,Client Payment Patel Industries Invoice 005,185000,credit,income,operating
+999,2025-05-23,Legal and Professional Fees,12000,debit,expense,operating
+999,2025-05-26,Bank Loan EMI May,42000,credit,liability,financing
+999,2025-05-28,Internet and Phone Bills,3800,debit,expense,operating
+999,2025-05-30,Miscellaneous Expenses May,4100,debit,expense,operating

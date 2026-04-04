@@ -87,9 +87,8 @@ class ApiClient {
 
   async uploadTransactionsCSV(file: File, entityId: number): Promise<{ inserted: number; failed: number; errors: any[] }> {
     const formData = new FormData()
-    formData.append('entity_id', entityId.toString())   // entity_id FIRST
     formData.append('file', file)
-    const response = await this.client.post('/transactions/upload-csv', formData, {
+    const response = await this.client.post(`/transactions/upload-csv?entity_id=${entityId}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
     return response.data
@@ -108,7 +107,7 @@ class ApiClient {
   ): Promise<{ id: number }> {
     const response = await this.client.post('/classify/feedback', {
       // If transactionId is null (Playground), send 0 to satisfy the backend
-      transaction_id: transactionId !== null ? transactionId : 0, 
+      transaction_id: transactionId !== null ? transactionId : 0,
       original_category: originalCategory,
       corrected_category: correctedCategory,
     })

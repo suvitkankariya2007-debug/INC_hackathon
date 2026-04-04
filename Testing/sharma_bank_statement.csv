@@ -1,0 +1,66 @@
+date,description,amount
+2025-01-03,Office Rent January,85000
+2025-01-05,Sharma Retail Payment INV-001,150000
+2025-01-07,Electricity Bill January,4200
+2025-01-10,Staff Salaries January,320000
+2025-01-12,GST Payment Q3,18500
+2025-01-15,Consulting Fee Mehta Associates,45000
+2025-01-18,Internet and Phone Bills,3800
+2025-01-20,Office Supplies Purchase,6700
+2025-01-22,Sharma Retail Payment INV-002,200000
+2025-01-25,TCS Invoice Payment,55000
+2025-01-28,Loan EMI January,42000
+2025-01-31,Miscellaneous Expenses January,2100
+2025-02-01,Office Rent February,85000
+2025-02-04,Patel Industries Payment,175000
+2025-02-06,Electricity Bill February,4500
+2025-02-10,Staff Salaries February,320000
+2025-02-12,AWS Cloud Invoice February,12000
+2025-02-14,Advance Tax Payment,35000
+2025-02-17,Consulting Fee Kapoor and Co,60000
+2025-02-19,Travel and Conveyance,8500
+2025-02-21,Sharma Retail Payment INV-003,220000
+2025-02-24,Printer and Stationery,4200
+2025-02-26,Loan EMI February,42000
+2025-02-28,Zoho Subscription,5400
+2025-03-03,Office Rent March,85000
+2025-03-05,Gupta Enterprises Payment,130000
+2025-03-07,Electricity Bill March,4800
+2025-03-10,Staff Salaries March,320000
+2025-03-13,GST Payment Q4,22000
+2025-03-15,AWS Cloud Invoice March,12000
+2025-03-17,Sharma Advisory Consulting,80000
+2025-03-19,Office Maintenance March,9500
+2025-03-21,Mehta Corp INV-007 Payment,195000
+2025-03-24,Legal and Professional Fees,15000
+2025-03-26,Loan EMI March,42000
+2025-03-28,Internet and Phone Bills,3800
+2025-03-31,Miscellaneous Expenses March,3200
+2025-04-02,Office Rent April,85000
+2025-04-05,Patel Industries INV-004,210000
+2025-04-07,Electricity Bill April,5100
+2025-04-16,Consulting Fee Kapoor and Co,75000
+2025-04-18,Travel and Conveyance,11000
+2025-04-21,Sharma Retail Payment INV-005,250000
+2025-04-25,Loan EMI April,42000
+2025-04-28,Tally Subscription,8000
+2025-05-08,Electricity Bill May,4600
+2025-05-13,AWS Invoice May,12000
+2025-05-15,Consulting Mehta Associates,55000
+2025-05-26,Loan EMI May,42000
+2025-05-28,Internet and Phone Bills,3800
+2025-04-10,Salaries April,335000
+2025-05-02,Rent May,85000
+2025-05-10,Salaries May,335000
+2025-05-19,Maintenance May,7200
+2025-05-21,Patel Inds INV-005,185000
+2025-04-23,Office Supplies April,5500
+2025-04-30,Tax Payment April,40000
+2025-05-06,Gupta Enterprises INV-002,160000
+2025-05-23,Professional Fees May,12000
+2025-05-30,Misc Expenses May,4100
+2025-06-01,Opening Balance Transfer,500000
+2025-06-02,Vendor Refund XYZ Supplies,15000
+2025-06-03,Unknown NEFT Credit,28000
+2025-06-04,Bank Charges June,750
+2025-06-05,Subscription Renewal Unknown,4999

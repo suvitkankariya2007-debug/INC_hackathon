@@ -168,7 +168,7 @@ def delete_transaction(id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/upload-csv")
-def upload_csv(file: UploadFile = File(...), entity_id: int = Form(...), db: Session = Depends(get_db)):
+def upload_csv(entity_id: int, file: UploadFile = File(...), db: Session = Depends(get_db)):
     try:
         raw_content = file.file.read()
         try:
@@ -221,7 +221,7 @@ def upload_csv(file: UploadFile = File(...), entity_id: int = Form(...), db: Ses
                 ai_confidence = cls_result.get("confidence")
 
                 tx = Transaction(
-                    entity_id=entity_id,  # Always use form param, NEVER CSV column
+                    entity_id=entity_id,  # Always use query param, NEVER CSV column
                     date=date_raw,
                     description=desc,
                     amount=float(amount_raw),
